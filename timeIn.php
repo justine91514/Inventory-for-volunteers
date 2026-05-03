@@ -1,6 +1,6 @@
-<?php 
-include 'includes/header.php'; 
-include 'includes/sidebar.php'; 
+<?php
+include 'includes/header.php';
+include 'includes/sidebar.php';
 include 'includes/db.php';
 date_default_timezone_set('Asia/Manila');
 
@@ -12,9 +12,11 @@ if (isset($_POST['time_in'])) {
     $time = date("Y-m-d H:i:s");
 
     // ✅ CHECK if already timed in (no timeout yet)
+    $today = date("Y-m-d");
+
     $check = $conn->query("SELECT * FROM attendance 
-                           WHERE volunteer_name = '$name' 
-                           AND time_out IS NULL");
+    WHERE volunteer_name = '$name' 
+    AND DATE(time_in) = '$today'");
 
     if ($check->num_rows > 0) {
         $error = "User already timed in. Please time out first.";
@@ -23,7 +25,7 @@ if (isset($_POST['time_in'])) {
                 VALUES ('$name', '$time')";
 
         if ($conn->query($sql)) {
-            $success = "Time In recorded!";
+            $success = "Hi ".$name . " " ."your name has been recorded!";
         } else {
             $error = "Error: " . $conn->error;
         }
