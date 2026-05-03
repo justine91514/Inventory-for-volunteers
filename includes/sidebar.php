@@ -1,4 +1,4 @@
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <h2>Inventory</h2>
     <ul>
         <li><a href="dashboard.php">Dashboard</a></li>
@@ -7,4 +7,3 @@
         <li><a href="#">Reports</a></li>
     </ul>
 </div>
-

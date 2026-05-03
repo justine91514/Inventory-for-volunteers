@@ -1,14 +1,30 @@
-<?php include 'includes/header.php'; ?>
-<?php include 'includes/sidebar.php'; ?>
+<?php 
+include 'includes/header.php'; 
+include 'includes/sidebar.php'; 
+include 'includes/db.php';
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Out</title>
-</head>
-<body>
-    <p>dssdsd</p>
-</body>
-</html>
+if (isset($_POST['time_out'])) {
+    $name = $_POST['name'];
+    $time = date("Y-m-d H:i:s");
+
+    $sql = "UPDATE attendance 
+        SET time_out = '$time' 
+        WHERE volunteer_name = '$name' 
+        AND time_out IS NULL
+        ORDER BY id DESC 
+        LIMIT 1";
+
+    $conn->query($sql);
+}
+?>
+
+<div class="main-content">
+    <h1>Time Out</h1>
+
+    <form method="POST">
+        <input type="text" name="name" placeholder="Enter Name" required>
+        <button type="submit" name="time_out">Time Out</button>
+    </form>
+</div>
+
+<?php include 'includes/footer.php'; ?>
