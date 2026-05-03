@@ -36,7 +36,7 @@ if (isset($_POST['time_out'])) {
             $sql = "UPDATE attendance 
                 SET time_out = '$time' 
                 WHERE volunteer_name = '$name' 
-                AND DATE(time_in) = '$today'
+                AND attendance_date = '$today'
                 AND time_out IS NULL
                 ORDER BY id DESC 
                 LIMIT 1";

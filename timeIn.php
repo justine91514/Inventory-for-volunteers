@@ -18,13 +18,13 @@ if (isset($_POST['time_in'])) {
 
     $check = $conn->query("SELECT * FROM attendance 
     WHERE volunteer_name = '$name' 
-    AND DATE(time_in) = '$today'");
+    AND attendance_date = '$today'");
 
     if ($check->num_rows > 0) {
         $error = "User already timed in. Please time out first.";
     } else {
-        $sql = "INSERT INTO attendance (volunteer_name, time_in) 
-                VALUES ('$name', '$time')";
+        $sql = "INSERT INTO attendance (volunteer_name, time_in, attendance_date) 
+                VALUES ('$name', '$time', '$today')";
 
         if ($conn->query($sql)) {
             $success = "Hi ".$name . " " ."your name has been recorded!";
@@ -59,6 +59,6 @@ if (isset($_POST['time_in'])) {
 
         <button type="submit" name="time_in">Time In</button>
     </form>
-</div>/div>
+</div>
 
 <?php include 'includes/footer.php'; ?>

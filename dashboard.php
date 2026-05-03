@@ -17,6 +17,7 @@ date_default_timezone_set('Asia/Manila');
             <th>Name</th>
             <th>Time In</th>
             <th>Time Out</th>
+            <th>Date</th>
         </tr>
 
         <?php if ($result && $result->num_rows > 0): ?>
@@ -32,6 +33,7 @@ date_default_timezone_set('Asia/Manila');
                             ? date("h:i A", strtotime($row['time_out']))
                             : '---' ?>
                     </td>
+                    <td><?= $row['attendance_date'] ?></td>
                 </tr>
             <?php endwhile; ?>
         <?php else: ?>
