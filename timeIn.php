@@ -27,7 +27,7 @@ if (isset($_POST['time_in'])) {
                 VALUES ('$name', '$time')";
 
         if ($conn->query($sql)) {
-            $success = "Hi " . $name . " " . "your name has been recorded!";
+            $success = "Hi ".$name . " " ."your name has been recorded!";
         } else {
             $error = "Error: " . $conn->error;
         }
@@ -54,11 +54,11 @@ if (isset($_POST['time_in'])) {
         <datalist id="nameList">
             <?php while ($row = $names->fetch_assoc()): ?>
                 <option value="<?= $row['volunteer_name'] ?>">
-                <?php endwhile; ?>
+            <?php endwhile; ?>
         </datalist>
 
         <button type="submit" name="time_in">Time In</button>
     </form>
-</div>
+</div>/div>
 
 <?php include 'includes/footer.php'; ?>

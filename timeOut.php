@@ -70,10 +70,10 @@ if (isset($_POST['time_out'])) {
         <datalist id="nameList">
             <?php while ($row = $names->fetch_assoc()): ?>
                 <option value="<?= $row['volunteer_name'] ?>">
-                <?php endwhile; ?>
+            <?php endwhile; ?>
         </datalist>
 
-        <button type="submit" name="time_in">Time In</button>
+        <button type="submit" name="time_out">Time Out</button>
     </form>
 </div>
 
