@@ -2,6 +2,7 @@
 include 'includes/header.php'; 
 include 'includes/sidebar.php'; 
 include 'includes/db.php';
+date_default_timezone_set('Asia/Manila');
 
 if (isset($_POST['time_out'])) {
     $name = $_POST['name'];

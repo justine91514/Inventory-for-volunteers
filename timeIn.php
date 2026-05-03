@@ -2,6 +2,7 @@
 include 'includes/header.php'; 
 include 'includes/sidebar.php'; 
 include 'includes/db.php';
+date_default_timezone_set('Asia/Manila');
 
 $error = "";
 $success = "";
