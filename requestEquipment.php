@@ -3,104 +3,175 @@ include 'includes/header.php';
 include 'includes/sidebar.php';
 include 'includes/db.php';
 date_default_timezone_set('Asia/Manila');
-?>
 
-<?php
 $error = "";
 $success = "";
 
-// get items
+// GET ITEMS
 $items = $conn->query("SELECT * FROM inventory");
 
-
-// borrow action
+// BORROW ACTION
 if (isset($_POST['borrow'])) {
 
     $name = trim($_POST['name']);
-    $item = $_POST['item'];
-    $qty = (int) $_POST['qty'];
+    $selected = $_POST['selected_items'] ?? [];
+    $qtys = $_POST['qty'] ?? [];
     $today = date("Y-m-d");
 
-    // 1. CHECK TIME-IN
-    $check = $conn->query("SELECT * FROM attendance 
+    // CHECK TIME-IN
+    $check = $conn->query("
+        SELECT * FROM attendance 
         WHERE volunteer_name = '$name' 
-        AND attendance_date = '$today'");
+        AND attendance_date = '$today'
+    ");
 
     if ($check->num_rows == 0) {
         $error = "You must time in first before borrowing.";
+    } elseif (empty($selected)) {
+        $error = "No items selected.";
     } else {
 
-        // 2. GET INVENTORY
-        $inv = $conn->query("SELECT * FROM inventory WHERE item_name = '$item'");
-        $row = $inv->fetch_assoc();
+        foreach ($selected as $item) {
 
-        if (!$row) {
-            $error = "Item not found.";
+            $qty = (int) ($qtys[$item] ?? 0);
 
-            // 3. STRONG SAFETY CHECK (IMPORTANT FIX)
-        } elseif ($qty <= 0) {
-            $error = "Invalid quantity.";
+            if ($qty <= 0)
+                continue;
 
-        } elseif ($row['available_qty'] < $qty) {
-            $error = "Not enough stock.";
+            // GET INVENTORY
+            $inv = $conn->query("
+                SELECT * FROM inventory 
+                WHERE item_name = '$item'
+            ");
+            $row = $inv->fetch_assoc();
 
-        } else {
+            if (!$row)
+                continue;
 
-            // 4. UPDATE INVENTORY (SAFE)
+            // CHECK STOCK
+            if ($row['available_qty'] < $qty) {
+                $error .= "$item not enough stock. ";
+                continue;
+            }
+
+            // UPDATE STOCK
             $conn->query("
                 UPDATE inventory 
                 SET available_qty = available_qty - $qty 
                 WHERE item_name = '$item'
             ");
 
-            // 5. INSERT BORROW RECORD
+            // INSERT BORROW RECORD
             $conn->query("
                 INSERT INTO borrow_records 
                 (borrower_name, item_name, quantity, borrow_date, status)
                 VALUES ('$name', '$item', $qty, NOW(), 'borrowed')
             ");
+        }
 
-            $success = "$name borrowed $qty $item";
+        if (!$error) {
+            $success = "$name successfully borrowed selected items.";
         }
     }
 }
 ?>
 
-<h2>Borrow Item</h2>
+<div class="main-content">
 
-<?php if ($error)
-    echo "<p style='color:red'>$error</p>"; ?>
-<?php if ($success)
-    echo "<p style='color:green'>$success</p>"; ?>
+    <h2>Borrow Items</h2>
 
-<form method="POST">
+    <!-- MESSAGES -->
+    <?php if ($error): ?>
+        <p class="error"><?= $error ?></p>
+    <?php endif; ?>
 
-    <input type="text" name="name" placeholder="Borrower Name" required>
+    <?php if ($success): ?>
+        <p class="success"><?= $success ?></p>
+    <?php endif; ?>
 
-    <select name="item" required>
-        <option value="">Select Item</option>
-        <?php while ($i = $items->fetch_assoc()): ?>
-            <option value="<?= $i['item_name'] ?>">
-                <?= $i['item_name'] ?> (Available: <?= $i['available_qty'] ?>)
-            </option>
-        <?php endwhile; ?>
-    </select>
+    <!-- FORM -->
+    <form method="POST">
 
-    <input type="number" name="qty" placeholder="Quantity" required>
+        <input type="text" id="borrowerName" name="name" placeholder="Borrower Name" required>
 
-    <button type="submit" name="borrow">Borrow</button>
-</form>
+        <table class="inventory-table">
+
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Item</th>
+                    <th>Available</th>
+                    <th>Qty</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <?php while ($i = $items->fetch_assoc()): ?>
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="selected_items[]" value="<?= $i['item_name'] ?>" disabled
+                                class="item-check">
+                        </td>
+
+                        <td><?= $i['item_name'] ?></td>
+
+                        <td><?= $i['available_qty'] ?></td>
+
+                        <td>
+                            <input type="number" name="qty[<?= $i['item_name'] ?>]" min="1" max="<?= $i['available_qty'] ?>"
+                                value="1" disabled class="qty-input">
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+
+        </table>
+
+        <br>
+
+        <button type="submit" name="borrow">Borrow Selected</button>
+
+    </form>
+
+</div>
 
 
+<script>
 
+const nameInput = document.getElementById("borrowerName");
+const checkboxes = document.querySelectorAll(".item-check");
 
+nameInput.addEventListener("input", function () {
 
+    let enabled = this.value.trim().length > 0;
 
+    checkboxes.forEach(cb => {
+        cb.disabled = !enabled;
+        if (!enabled) {
+            cb.checked = false;
+            toggleQty(cb, false);
+        }
+    });
+});
 
+checkboxes.forEach(cb => {
 
+    cb.addEventListener("change", function () {
+        toggleQty(this, this.checked);
+    });
 
+});
 
+function toggleQty(checkbox, isChecked) {
+    let row = checkbox.closest("tr");
+    let qty = row.querySelector(".qty-input");
 
+    qty.disabled = !isChecked;
 
+    if (!isChecked) {
+        qty.value = 1;
+    }
+}
 
+</script>
 <?php include 'includes/footer.php'; ?>
