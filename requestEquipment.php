@@ -12,15 +12,16 @@ $success = "";
 // get items
 $items = $conn->query("SELECT * FROM inventory");
 
+
 // borrow action
 if (isset($_POST['borrow'])) {
 
-    $name = $_POST['name'];
+    $name = trim($_POST['name']);
     $item = $_POST['item'];
-    $qty = $_POST['qty'];
+    $qty = (int) $_POST['qty'];
     $today = date("Y-m-d");
 
-    // 1. CHECK IF TIME-IN TODAY
+    // 1. CHECK TIME-IN
     $check = $conn->query("SELECT * FROM attendance 
         WHERE volunteer_name = '$name' 
         AND attendance_date = '$today'");
@@ -35,19 +36,29 @@ if (isset($_POST['borrow'])) {
 
         if (!$row) {
             $error = "Item not found.";
+
+            // 3. STRONG SAFETY CHECK (IMPORTANT FIX)
+        } elseif ($qty <= 0) {
+            $error = "Invalid quantity.";
+
         } elseif ($row['available_qty'] < $qty) {
             $error = "Not enough stock.";
+
         } else {
 
-            // 3. INSERT BORROW RECORD
-            $conn->query("INSERT INTO borrow_records 
-                (borrower_name, item_name, quantity, borrow_date)
-                VALUES ('$name', '$item', '$qty', NOW())");
-
-            // 4. UPDATE INVENTORY
-            $conn->query("UPDATE inventory 
+            // 4. UPDATE INVENTORY (SAFE)
+            $conn->query("
+                UPDATE inventory 
                 SET available_qty = available_qty - $qty 
-                WHERE item_name = '$item'");
+                WHERE item_name = '$item'
+            ");
+
+            // 5. INSERT BORROW RECORD
+            $conn->query("
+                INSERT INTO borrow_records 
+                (borrower_name, item_name, quantity, borrow_date, status)
+                VALUES ('$name', '$item', $qty, NOW(), 'borrowed')
+            ");
 
             $success = "$name borrowed $qty $item";
         }

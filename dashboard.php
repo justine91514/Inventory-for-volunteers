@@ -45,6 +45,42 @@ date_default_timezone_set('Asia/Manila');
 </div>
 
 <?php
+$borrow = $conn->query("
+    SELECT * FROM borrow_records
+    WHERE status = 'borrowed'
+    ORDER BY id DESC
+");
+?>
+
+<div class="main-content">
+    <h2>Borrowed Items</h2>
+
+    <table class="inventory-table">
+        <tr>
+            <th>Borrower</th>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Date</th>
+        </tr>
+
+        <?php if ($borrow && $borrow->num_rows > 0): ?>
+            <?php while ($row = $borrow->fetch_assoc()): ?>
+                <tr>
+                    <td><?= $row['borrower_name'] ?></td>
+                    <td><?= $row['item_name'] ?></td>
+                    <td><?= $row['quantity'] ?></td>
+                    <td><?= date("Y-m-d h:i A", strtotime($row['borrow_date'])) ?></td>
+                </tr>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="4">No active borrows</td>
+            </tr>
+        <?php endif; ?>
+    </table>
+</div>
+
+<?php
 $inv = $conn->query("
     SELECT *,
     (total_qty - available_qty) AS borrowed_qty
@@ -56,41 +92,47 @@ $inv = $conn->query("
 
 <div class="table-container">
 
-<table class="inventory-table">
+    <table class="inventory-table">
 
-<tr>
-    <th>Item</th>
-    <th>Total</th>
-    <th>Borrowed</th>
-    <th>Available</th>
-</tr>
+        <tr>
+            <th>Item</th>
+            <th>Total</th>
+            <th>Borrowed</th>
+            <th>Available</th>
+        </tr>
 
-<?php while ($row = $inv->fetch_assoc()): ?>
-<tr>
-    <td><strong><?= $row['item_name'] ?></strong></td>
+        <?php while ($row = $inv->fetch_assoc()): ?>
+            <tr>
+                <td><strong><?= $row['item_name'] ?></strong></td>
 
-    <td>
-        <span class="badge badge-blue">
-            <?= $row['total_qty'] ?>
-        </span>
-    </td>
+                <td>
+                    <span class="badge badge-blue">
+                        <?= $row['total_qty'] ?>
+                    </span>
+                </td>
 
-    <td>
-        <span class="badge badge-red">
-            <?= $row['borrowed_qty'] ?>
-        </span>
-    </td>
+                <td>
+                    <span class="badge badge-red">
+                        <?= $row['borrowed_qty'] ?>
+                    </span>
+                </td>
 
-    <td>
-        <span class="badge badge-green">
-            <?= $row['available_qty'] ?>
-        </span>
-    </td>
-</tr>
-<?php endwhile; ?>
+                <td>
+                    <span class="badge badge-green">
+                        <?= $row['available_qty'] ?>
+                    </span>
+                </td>
+            </tr>
+        <?php endwhile; ?>
 
-</table>
+    </table>
 
 </div>
 
+
+<script>
+setInterval(() => {
+    location.reload();
+}, 5000);
+</script>
 <?php include 'includes/footer.php'; ?>

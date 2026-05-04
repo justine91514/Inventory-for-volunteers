@@ -5,6 +5,7 @@
         <li><a href="timeIn.php">Time In</a></li>
         <li><a href="timeOut.php">Time Out</a></li>
         <li><a href="requestEquipment.php">Request Equipment</a></li>
+        <li><a href="return.php">Return Equipment</a></li>
         <li><a href="storage.php">Storage</a></li>
         <li><a href="#">Reports</a></li>
     </ul>
