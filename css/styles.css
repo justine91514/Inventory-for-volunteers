@@ -95,3 +95,102 @@ body {
     background: #ecf0f1;
     transition: margin-left 0.3s;
 }
+
+/* ===== DASHBOARD GENERAL ===== */
+.main-content {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    margin-bottom: 15px;
+}
+
+/* ===== ATTENDANCE TABLE ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+table th {
+    background: #2c3e50;
+    color: #fff;
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+}
+
+table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+table tr:hover {
+    background: #f8f8f8;
+}
+
+/* ===== INVENTORY TABLE ===== */
+.table-container {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.inventory-table th {
+    background: #1f2d3d;
+    color: #fff;
+    padding: 14px;
+    text-align: left;
+}
+
+.inventory-table td {
+    padding: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.inventory-table tr:hover {
+    background: #f5f7fa;
+}
+
+/* ===== BADGES ===== */
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+    display: inline-block;
+}
+
+.badge-green {
+    background: #27ae60;
+}
+
+.badge-red {
+    background: #e74c3c;
+}
+
+.badge-blue {
+    background: #3498db;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty {
+    text-align: center;
+    padding: 15px;
+    color: #777;
+}

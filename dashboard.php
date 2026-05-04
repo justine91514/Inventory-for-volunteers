@@ -44,4 +44,53 @@ date_default_timezone_set('Asia/Manila');
     </table>
 </div>
 
+<?php
+$inv = $conn->query("
+    SELECT *,
+    (total_qty - available_qty) AS borrowed_qty
+    FROM inventory
+");
+?>
+
+
+
+<div class="table-container">
+
+<table class="inventory-table">
+
+<tr>
+    <th>Item</th>
+    <th>Total</th>
+    <th>Borrowed</th>
+    <th>Available</th>
+</tr>
+
+<?php while ($row = $inv->fetch_assoc()): ?>
+<tr>
+    <td><strong><?= $row['item_name'] ?></strong></td>
+
+    <td>
+        <span class="badge badge-blue">
+            <?= $row['total_qty'] ?>
+        </span>
+    </td>
+
+    <td>
+        <span class="badge badge-red">
+            <?= $row['borrowed_qty'] ?>
+        </span>
+    </td>
+
+    <td>
+        <span class="badge badge-green">
+            <?= $row['available_qty'] ?>
+        </span>
+    </td>
+</tr>
+<?php endwhile; ?>
+
+</table>
+
+</div>
+
 <?php include 'includes/footer.php'; ?>
