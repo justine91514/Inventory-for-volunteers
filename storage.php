@@ -46,111 +46,86 @@ if (isset($_POST['add_item'])) {
 $items = $conn->query("SELECT * FROM inventory");
 ?>
 
-<h2>Inventory</h2>
+<div class="main-content">
+    <h2>Inventory</h2>
 
-<?php if (!empty($success))
-    echo "<p style='color:green'>$success</p>"; ?>
-<?php if (!empty($error))
-    echo "<p style='color:red'>$error</p>"; ?>
+    <?php if (!empty($success))
+        echo "<p style='color:green'>$success</p>"; ?>
+    <?php if (!empty($error))
+        echo "<p style='color:red'>$error</p>"; ?>
 
-<form method="POST">
-    <input type="text" name="item" placeholder="Item Name" required>
-    <input type="number" name="qty" placeholder="Quantity" required>
-    <button type="submit" name="add_item">Add Item</button>
-</form>
+    <form method="POST">
+        <input type="text" name="item" placeholder="Item Name" required>
+        <input type="number" name="qty" placeholder="Quantity" required>
+        <button type="submit" name="add_item">Add Item</button>
+    </form>
 
-<hr>
-
-<table border="1">
-    <tr>
-        <th>Item</th>
-        <th>Total</th>
-        <th>Available</th>
-        <th>Borrowed</th>
-        <th>Action</th>
-    </tr>
-
-    <?php while ($row = $items->fetch_assoc()): ?>
+    <table border="1">
         <tr>
-            <td><?= $row['item_name'] ?></td>
-            <td><?= $row['total_qty'] ?></td>
-            <td><?= $row['available_qty'] ?></td>
-            <td><?= $row['total_qty'] - $row['available_qty'] ?></td>
+            <th>Item</th>
+            <th>Total</th>
+            <th>Available</th>
+            <th>Borrowed</th>
+            <th>Action</th>
+        </tr>
 
-            <td>
-                <button onclick="openEdit(
+        <?php while ($row = $items->fetch_assoc()): ?>
+            <tr>
+                <td><?= $row['item_name'] ?></td>
+                <td><?= $row['total_qty'] ?></td>
+                <td><?= $row['available_qty'] ?></td>
+                <td><?= $row['total_qty'] - $row['available_qty'] ?></td>
+
+                <td>
+                    <button onclick="openEdit(
         '<?= $row['id'] ?>',
         '<?= $row['item_name'] ?>',
         '<?= $row['total_qty'] ?>'
     )">Edit</button>
 
-                <button onclick="deleteItem(<?= $row['id'] ?>)">Delete</button>
-            </td>
-        </tr>
-    <?php endwhile; ?>
-</table>
+                    <button onclick="deleteItem(<?= $row['id'] ?>)">Delete</button>
+                </td>
+            </tr>
+        <?php endwhile; ?>
+    </table>
 
-<div id="editModal" style="display:none; position:fixed; top:20%; left:35%; background:white; padding:20px; box-shadow:0 0 10px rgba(0,0,0,0.3);">
-    
-    <h3>Edit Item</h3>
+    <div id="editModal" class="edit-modal">
 
-    <form id="editForm">
-        <input type="hidden" id="edit_id">
+        <div class="edit-modal-box">
 
-        <input type="text" id="edit_name" disabled><br><br>
+            <div class="edit-modal-header">
+                <h3>Edit Inventory Item</h3>
+                <span onclick="closeModal()">✖</span>
+            </div>
 
-        <input type="number" id="edit_total" required><br><br>
+            <div class="edit-modal-body">
 
-        <button type="button" onclick="submitEdit()">Save</button>
-        <button type="button" onclick="closeModal()">Close</button>
-    </form>
+                <input type="hidden" id="edit_id">
 
-    <p id="edit_error" style="color:red;"></p>
+                <div class="form-group">
+                    <label>Item Name</label>
+                    <input type="text" id="edit_name" disabled>
+                </div>
+
+                <div class="form-group">
+                    <label>Total Quantity</label>
+                    <input type="number" id="edit_total" required>
+                </div>
+
+                <p id="edit_error" class="edit-error"></p>
+
+            </div>
+
+            <div class="edit-modal-footer">
+                <button class="btn-save" onclick="submitEdit()">Save Changes</button>
+                <button class="btn-close" onclick="closeModal()">Cancel</button>
+            </div>
+
+        </div>
+
+    </div>
 </div>
 
-<script>
-function openEdit(id, name, total) {
-    document.getElementById("editModal").style.display = "block";
-    document.getElementById("edit_id").value = id;
-    document.getElementById("edit_name").value = name;
-    document.getElementById("edit_total").value = total;
-}
 
-function closeModal() {
-    document.getElementById("editModal").style.display = "none";
-}
 
-function submitEdit() {
-    let id = document.getElementById("edit_id").value;
-    let total = document.getElementById("edit_total").value;
-
-    fetch("update_item.php", {
-        method: "POST",
-        headers: {"Content-Type": "application/x-www-form-urlencoded"},
-        body: "id=" + id + "&total=" + total
-    })
-    .then(res => res.text())
-    .then(data => {
-        if (data === "success") {
-            location.reload();
-        } else {
-            document.getElementById("edit_error").innerText = data;
-        }
-    });
-}
-
-function deleteItem(id) {
-    if (!confirm("Delete this item?")) return;
-
-    fetch("delete_item.php?id=" + id)
-    .then(res => res.text())
-    .then(data => {
-        if (data === "success") {
-            location.reload();
-        } else {
-            alert(data);
-        }
-    });
-}
-</script>
 <?php include 'includes/footer.php'; ?>

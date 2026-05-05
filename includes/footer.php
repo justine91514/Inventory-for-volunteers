@@ -57,6 +57,14 @@ function submitReturn() {
     });
 }
 
+
+
+
+
+
+
+
+
 /* ===== TIME IN ===== */
 function openTimeInModal() {
     let name = document.querySelector("input[name='name']").value;
@@ -105,5 +113,85 @@ function submitTimeOut() {
 
     form.appendChild(hidden);
     form.submit();
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    //SCRIPT FOR EDIT MODAL IN STORAGE
+    function openEdit(id, name, total) {
+    document.getElementById("editModal").style.display = "block";
+    document.getElementById("edit_id").value = id;
+    document.getElementById("edit_name").value = name;
+    document.getElementById("edit_total").value = total;
+}
+
+function closeModal() {
+    document.getElementById("editModal").style.display = "none";
+}
+</script>
+
+<script>
+function openEdit(id, name, total) {
+    document.getElementById("editModal").style.display = "block";
+    document.getElementById("edit_id").value = id;
+    document.getElementById("edit_name").value = name;
+    document.getElementById("edit_total").value = total;
+}
+
+function closeModal() {
+    document.getElementById("editModal").style.display = "none";
+}
+
+function submitEdit() {
+    let id = document.getElementById("edit_id").value;
+    let total = document.getElementById("edit_total").value;
+
+    fetch("update_item.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: "id=" + id + "&total=" + total
+    })
+    .then(res => res.text())
+    .then(data => {
+        if (data === "success") {
+            location.reload();
+        } else {
+            document.getElementById("edit_error").innerText = data;
+        }
+    });
+}
+</script>
+
+<script>
+    //SCRIPT FOR DELETING ITEM IN STORAGE
+function deleteItem(id) {
+    if (!confirm("Delete this item?")) return;
+
+    fetch("delete_item.php?id=" + id)
+    .then(res => res.text())
+    .then(data => {
+        if (data === "success") {
+            location.reload();
+        } else {
+            alert(data);
+        }
+    });
 }
 </script>

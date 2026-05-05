@@ -634,3 +634,243 @@ h1 {
     border-radius: 6px;
     cursor: pointer;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===== PAGE WRAP ===== */
+.main-content {
+    margin-left: 240px;
+    padding: 25px;
+    background: #f4f6f9;
+    min-height: 100vh;
+}
+
+/* ===== TITLE ===== */
+h2 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+/* ===== ALERTS ===== */
+.success, .error {
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.success {
+    background: #eafaf1;
+    color: #27ae60;
+}
+
+.error {
+    background: #fdecea;
+    color: #e74c3c;
+}
+
+/* ===== FORM ===== */
+form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+form input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+form button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+form button:hover {
+    background: #2980b9;
+}
+
+/* ===== TABLE ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+table th {
+    background: #2c3e50;
+    color: #fff;
+    text-align: left;
+    padding: 12px;
+    font-size: 14px;
+}
+
+table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+table tr:hover {
+    background: #f9f9f9;
+}
+
+/* ===== ACTION BUTTONS ===== */
+table button {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-right: 5px;
+    transition: 0.2s;
+}
+
+table button:first-child {
+    background: #f39c12; /* edit */
+    color: #fff;
+}
+
+table button:first-child:hover {
+    background: #d68910;
+}
+
+table button:last-child {
+    background: #e74c3c; /* delete */
+    color: #fff;
+}
+
+table button:last-child:hover {
+    background: #c0392b;
+}
+
+/* ===== EDIT MODAL WRAPPER ===== */
+.edit-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+}
+
+/* BOX */
+.edit-modal-box {
+    width: 360px;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+}
+
+/* HEADER */
+.edit-modal-header {
+    background: #1f2d3d;
+    color: #fff;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.edit-modal-header h3 {
+    margin: 0;
+    font-size: 15px;
+}
+
+.edit-modal-header span {
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* BODY */
+.edit-modal-body {
+    padding: 20px;
+}
+
+/* FORM GROUP */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-size: 13px;
+    color: #555;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+/* ERROR */
+.edit-error {
+    color: #e74c3c;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+/* FOOTER */
+.edit-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 15px;
+    border-top: 1px solid #eee;
+}
+
+/* BUTTONS */
+.btn-save {
+    background: #27ae60;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-save:hover {
+    background: #1e8449;
+}
+
+.btn-close {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-close:hover {
+    background: #c0392b;
+}
