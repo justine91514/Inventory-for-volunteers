@@ -32,14 +32,14 @@ if (isset($_POST['time_out'])) {
             $error = $name . " Already timed out.";
         } else {
 
-            // ✅ proceed update
+            // proceed update
             $sql = "UPDATE attendance 
-                SET time_out = '$time' 
-                WHERE volunteer_name = '$name' 
-                AND attendance_date = '$today'
-                AND time_out IS NULL
-                ORDER BY id DESC 
-                LIMIT 1";
+        SET time_out = '$time' 
+        WHERE volunteer_name = '$name' 
+        AND DATE(time_in) = '$today'
+        AND time_out IS NULL
+        ORDER BY id DESC 
+        LIMIT 1";
 
             if ($conn->query($sql)) {
                 $success = "Time Out recorded!";
@@ -58,7 +58,6 @@ if (isset($_POST['time_out'])) {
         <div class="auth-header">
             <h2>🔴 Time Out</h2>
             <p>Record exit time</p>
-            </button>
         </div>
 
         <?php if ($error): ?>
@@ -80,7 +79,7 @@ if (isset($_POST['time_out'])) {
                     <?php endwhile; ?>
             </datalist>
 
-            <button type="submit" name="time_in">
+            <button type="submit" name="time_out">
                 ✔ Submit Time Out
             </button>
 
