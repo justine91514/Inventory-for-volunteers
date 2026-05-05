@@ -75,8 +75,8 @@ $borrow = $conn->query("
                                 <td><?= date("h:i A", strtotime($row['time_in'])) ?></td>
                                 <td>
                                     <?= $row['time_out']
-                                        ? date("h:i A", strtotime($row['time_out']))
-                                        : '<span class="badge badge-red">Active</span>' ?>
+                                        ? '<span class="badge-timeout">' . date("h:i A", strtotime($row['time_out'])) . '</span>'
+                                        : '<span class="badge-active">Active</span>' ?>
                                 </td>
                                 <td><?= $row['attendance_date'] ?></td>
                             </tr>

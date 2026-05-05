@@ -191,6 +191,34 @@ body {
 .badge-red   { background: #e74c3c; }
 .badge-blue  { background: #3498db; }
 
+/* ACTIVE (BLINKING GREEN) */
+.badge-active {
+    background: #27ae60;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    animation: blink 1.2s infinite;
+}
+
+/* TIMEOUT (RED) */
+.badge-timeout {
+    background: #e74c3c;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* BLINK ANIMATION */
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
 /* ===== EMPTY STATE ===== */
 .empty {
     text-align: center;
