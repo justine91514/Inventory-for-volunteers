@@ -76,10 +76,11 @@ if (isset($_POST['return_item'])) {
 
                 <td>
                     <button type="button" onclick="openReturnModal(
-        <?= $row['id'] ?>,
-        '<?= $row['item_name'] ?>',
-        <?= $row['quantity'] ?>
-    )">
+    <?= $row['id'] ?>,
+    '<?= $row['borrower_name'] ?>',
+    '<?= $row['item_name'] ?>',
+    <?= $row['quantity'] ?>
+)">
                         Return
                     </button>
                 </td>
@@ -90,10 +91,15 @@ if (isset($_POST['return_item'])) {
 </div>
 
 
-<div id="returnModal"
-    style="display:none; position:fixed; top:20%; left:35%; background:white; padding:20px; box-shadow:0 0 10px rgba(0,0,0,0.3);">
+<div id="returnModal">
 
-    <h3>Return Equipment</h3>
+    <div id="modalHeader">
+        <h3>Return Equipment</h3>
+    </div>
+
+    <p><strong>Borrower:</strong> <span id="m_borrower"></span></p>
+    <p><strong>Item:</strong> <span id="m_item"></span></p>
+    <p><strong>Borrowed Qty:</strong> <span id="m_qty"></span></p>
 
     <p id="returnText"></p>
 
@@ -106,71 +112,5 @@ if (isset($_POST['return_item'])) {
 
     <button onclick="submitReturn()">Confirm</button>
     <button onclick="closeReturn()">Cancel</button>
-
 </div>
-
-
-
-<script>
-
-    function openReturnModal(id, item, qty) {
-
-        document.getElementById("returnModal").style.display = "block";
-        document.getElementById("borrow_id").value = id;
-        document.getElementById("max_qty").value = qty;
-
-        if (qty > 1) {
-            document.getElementById("return_qty").style.display = "block";
-            document.getElementById("return_qty").max = qty;
-            document.getElementById("return_qty").value = qty;
-
-            document.getElementById("returnText").innerText =
-                "How many " + item + " do you want to return?";
-        } else {
-            document.getElementById("return_qty").style.display = "none";
-
-            document.getElementById("returnText").innerText =
-                "Do you really want to return the equipment?";
-        }
-    }
-
-    function closeReturn() {
-        document.getElementById("returnModal").style.display = "none";
-    }
-
-    function submitReturn() {
-
-        let id = document.getElementById("borrow_id").value;
-        let max = document.getElementById("max_qty").value;
-        let qtyInput = document.getElementById("return_qty");
-
-        let qty = (qtyInput.style.display === "none") ? 1 : parseInt(qtyInput.value);
-
-        if (qty > max) {
-            alert("Cannot return more than borrowed quantity.");
-            return;
-        }
-
-        if (!confirm("Do you really want to return the equipment?")) {
-            return;
-        }
-
-        fetch("processReturn.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: "id=" + id + "&qty=" + qty
-        })
-            .then(res => res.text())
-            .then(data => {
-                if (data === "success") {
-                    location.reload();
-                } else {
-                    alert(data);
-                }
-            });
-    }
-
-</script>
-
-
 <?php include 'includes/footer.php'; ?>

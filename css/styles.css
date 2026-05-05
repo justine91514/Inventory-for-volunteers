@@ -324,14 +324,9 @@ body {
     color: #27ae60;
 }
 
+/* =============================================================== */
 
-
-
-
-
-
-
-/* ===== BORROW PAGE ===== */
+/* ===== REQUEST EQUIPMENT PAGE ===== */
 h2 {
     margin-bottom: 15px;
     color: #2c3e50;
@@ -437,4 +432,144 @@ button[name="borrow"] {
 
 button[name="borrow"]:hover {
     background: #1a252f;
+}
+
+
+/* =============================================================== */
+
+
+/* ===== RETURN PAGE ===== */
+
+h1 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+/* ===== TABLE ===== */
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.inventory-table th {
+    background: #2c3e50;
+    color: #fff;
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.inventory-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.inventory-table tr:hover {
+    background: #f9f9f9;
+}
+
+/* ===== RETURN BUTTON ===== */
+.inventory-table button {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.inventory-table button:hover {
+    background: #c0392b;
+}
+
+/* ===== SUCCESS / ERROR ===== */
+.error {
+    background: #ffe5e5;
+    color: #c0392b;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.success {
+    background: #e6ffed;
+    color: #27ae60;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+/* ===== MODAL ===== */
+#returnModal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+
+#returnModal h3 {
+    margin-top: 0;
+    color: #ffffff;
+}
+
+#returnModal p {
+    margin: 10px 0;
+    color: #555;
+}
+
+/* ===== MODAL INPUT ===== */
+#return_qty {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+/* ===== MODAL BUTTONS ===== */
+#returnModal button {
+    margin-top: 15px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#returnModal button:first-of-type {
+    background: #27ae60;
+    color: white;
+}
+
+#returnModal button:first-of-type:hover {
+    background: #1e8449;
+}
+
+#returnModal button:last-of-type {
+    background: #e74c3c;
+    color: white;
+}
+
+#returnModal button:last-of-type:hover {
+    background: #c0392b;
+}
+
+#modalHeader {
+    cursor: move;
+    padding: 10px;
+    background: #2c3e50;
+    color: white;
+    border-radius: 10px 10px 0 0;
+    margin: -20px -20px 10px -20px;
 }
