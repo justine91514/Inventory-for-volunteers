@@ -195,3 +195,83 @@ function deleteItem(id) {
     });
 }
 </script>
+
+
+
+
+<script>
+function openCalendar() {
+    document.getElementById("calendarPicker").showPicker();
+}
+
+document.getElementById("calendarPicker").addEventListener("change", function () {
+    window.location.href = "?date=" + this.value;
+});
+</script>
+
+<script>
+let currentDate = new Date("<?= $date ?>");
+
+function toggleCalendar() {
+    document.getElementById("calendarPopup").style.display = "flex";
+    renderCalendar();
+}
+
+function closeCalendar() {
+    document.getElementById("calendarPopup").style.display = "none";
+}
+
+function changeMonth(step) {
+    currentDate.setMonth(currentDate.getMonth() + step);
+    renderCalendar();
+}
+
+function renderCalendar() {
+    const grid = document.getElementById("calendarGrid");
+    const monthLabel = document.getElementById("calMonth");
+
+    grid.innerHTML = "";
+
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    monthLabel.innerText = currentDate.toLocaleString('default', {
+        month: 'long',
+        year: 'numeric'
+    });
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    // blank spaces
+    for (let i = 0; i < firstDay; i++) {
+        grid.innerHTML += `<div></div>`;
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+
+        let date = new Date(year, month, day);
+
+        let disabled = date > today ? "disabled-day" : "";
+
+        grid.innerHTML += `
+            <div class="calendar-day ${disabled}"
+                 onclick="selectDate('${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}')">
+                ${day}
+            </div>
+        `;
+    }
+}
+
+function selectDate(date) {
+    window.location.href = "?date=" + date;
+}
+
+// close on outside click
+document.getElementById("calendarPopup").addEventListener("click", function(e){
+    if (e.target === this) closeCalendar();
+});
+</script>
