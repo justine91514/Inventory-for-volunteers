@@ -128,21 +128,31 @@ if (isset($_POST['borrow'])) {
             </thead>
 
             <tbody>
-                <?php while ($i = $items->fetch_assoc()): ?>
-                    <tr>
+                <?php while ($i = $items->fetch_assoc()):
+                    $isOut = $i['available_qty'] <= 0;
+                    ?>
+                    <tr class="<?= $isOut ? 'out-of-stock' : '' ?>">
+
                         <td>
-                            <input type="checkbox" name="selected_items[]" value="<?= $i['item_name'] ?>" disabled
-                                class="item-check">
+                            <input type="checkbox" name="selected_items[]" value="<?= $i['item_name'] ?>" class="item-check"
+                                <?= $isOut ? 'disabled' : 'disabled' ?>>
                         </td>
 
                         <td><?= $i['item_name'] ?></td>
 
-                        <td><?= $i['available_qty'] ?></td>
+                        <td>
+                            <?php if ($isOut): ?>
+                                <span class="stock-zero">0 (Out of stock)</span>
+                            <?php else: ?>
+                                <?= $i['available_qty'] ?>
+                            <?php endif; ?>
+                        </td>
 
                         <td>
                             <input type="number" name="qty[<?= $i['item_name'] ?>]" min="1" max="<?= $i['available_qty'] ?>"
-                                value="1" disabled class="qty-input">
+                                value="1" class="qty-input" disabled>
                         </td>
+
                     </tr>
                 <?php endwhile; ?>
             </tbody>
@@ -159,7 +169,6 @@ if (isset($_POST['borrow'])) {
 
 
 <script>
-
     const nameInput = document.getElementById("borrowerName");
     const checkboxes = document.querySelectorAll(".item-check");
 
@@ -168,7 +177,15 @@ if (isset($_POST['borrow'])) {
         let enabled = this.value.trim().length > 0;
 
         checkboxes.forEach(cb => {
+
+            // ❌ DO NOT ENABLE if out-of-stock
+            if (cb.closest("tr").classList.contains("out-of-stock")) {
+                cb.disabled = true;
+                return;
+            }
+
             cb.disabled = !enabled;
+
             if (!enabled) {
                 cb.checked = false;
                 toggleQty(cb, false);
@@ -177,11 +194,9 @@ if (isset($_POST['borrow'])) {
     });
 
     checkboxes.forEach(cb => {
-
         cb.addEventListener("change", function () {
             toggleQty(this, this.checked);
         });
-
     });
 
     function toggleQty(checkbox, isChecked) {
@@ -194,6 +209,5 @@ if (isset($_POST['borrow'])) {
             qty.value = 1;
         }
     }
-
 </script>
 <?php include 'includes/footer.php'; ?>

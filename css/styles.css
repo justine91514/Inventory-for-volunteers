@@ -234,3 +234,23 @@ table tr:hover {
 .dropdown:hover .dropdown-content {
     display: block;
 }
+
+
+
+/* out of stock row */
+.out-of-stock {
+    background-color: #ffe5e5;
+    color: #b30000;
+}
+
+/* red text */
+.stock-zero {
+    font-weight: bold;
+    color: red;
+}
+
+/* disabled look */
+.out-of-stock input {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
