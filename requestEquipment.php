@@ -61,12 +61,34 @@ if (isset($_POST['borrow'])) {
                 WHERE item_name = '$item'
             ");
 
-            // INSERT BORROW RECORD
-            $conn->query("
-                INSERT INTO borrow_records 
-                (borrower_name, item_name, quantity, borrow_date, status)
-                VALUES ('$name', '$item', $qty, NOW(), 'borrowed')
-            ");
+            // CHECK IF SAME ITEM ALREADY BORROWED BY USER
+            $existing = $conn->query("
+    SELECT * FROM borrow_records 
+    WHERE borrower_name = '$name'
+    AND item_name = '$item'
+    AND status = 'borrowed'
+");
+
+            if ($existing->num_rows > 0) {
+
+                // UPDATE EXISTING (ADD QUANTITY)
+                $conn->query("
+        UPDATE borrow_records
+        SET quantity = quantity + $qty
+        WHERE borrower_name = '$name'
+        AND item_name = '$item'
+        AND status = 'borrowed'
+    ");
+
+            } else {
+
+                // INSERT NEW
+                $conn->query("
+        INSERT INTO borrow_records 
+        (borrower_name, item_name, quantity, borrow_date, status)
+        VALUES ('$name', '$item', $qty, NOW(), 'borrowed')
+    ");
+            }
         }
 
         if (!$error) {
@@ -138,40 +160,40 @@ if (isset($_POST['borrow'])) {
 
 <script>
 
-const nameInput = document.getElementById("borrowerName");
-const checkboxes = document.querySelectorAll(".item-check");
+    const nameInput = document.getElementById("borrowerName");
+    const checkboxes = document.querySelectorAll(".item-check");
 
-nameInput.addEventListener("input", function () {
+    nameInput.addEventListener("input", function () {
 
-    let enabled = this.value.trim().length > 0;
+        let enabled = this.value.trim().length > 0;
+
+        checkboxes.forEach(cb => {
+            cb.disabled = !enabled;
+            if (!enabled) {
+                cb.checked = false;
+                toggleQty(cb, false);
+            }
+        });
+    });
 
     checkboxes.forEach(cb => {
-        cb.disabled = !enabled;
-        if (!enabled) {
-            cb.checked = false;
-            toggleQty(cb, false);
+
+        cb.addEventListener("change", function () {
+            toggleQty(this, this.checked);
+        });
+
+    });
+
+    function toggleQty(checkbox, isChecked) {
+        let row = checkbox.closest("tr");
+        let qty = row.querySelector(".qty-input");
+
+        qty.disabled = !isChecked;
+
+        if (!isChecked) {
+            qty.value = 1;
         }
-    });
-});
-
-checkboxes.forEach(cb => {
-
-    cb.addEventListener("change", function () {
-        toggleQty(this, this.checked);
-    });
-
-});
-
-function toggleQty(checkbox, isChecked) {
-    let row = checkbox.closest("tr");
-    let qty = row.querySelector(".qty-input");
-
-    qty.disabled = !isChecked;
-
-    if (!isChecked) {
-        qty.value = 1;
     }
-}
 
 </script>
 <?php include 'includes/footer.php'; ?>

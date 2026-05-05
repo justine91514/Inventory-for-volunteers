@@ -46,9 +46,11 @@ date_default_timezone_set('Asia/Manila');
 
 <?php
 $borrow = $conn->query("
-    SELECT * FROM borrow_records
+    SELECT borrower_name, item_name, SUM(quantity) as quantity, MAX(borrow_date) as borrow_date
+    FROM borrow_records
     WHERE status = 'borrowed'
-    ORDER BY id DESC
+    GROUP BY borrower_name, item_name
+    ORDER BY borrow_date DESC
 ");
 ?>
 
@@ -131,8 +133,8 @@ $inv = $conn->query("
 
 
 <script>
-setInterval(() => {
-    location.reload();
-}, 5000);
+    setInterval(() => {
+        location.reload();
+    }, 5000);
 </script>
 <?php include 'includes/footer.php'; ?>
