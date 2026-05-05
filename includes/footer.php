@@ -1,101 +1,109 @@
 <script>
-    document.getElementById("toggleBtn").onclick = function () {
-        document.getElementById("sidebar").classList.toggle("collapsed");
-    };
-</script>
+/* ===== SIDEBAR TOGGLE ===== */
+document.getElementById("toggleBtn").onclick = function () {
+    document.getElementById("sidebar").classList.toggle("collapsed");
+};
 
-<script>
-    //MODAL
-    function openReturnModal(id, borrower, item, qty) {
+/* ===== RETURN MODAL ===== */
+function openReturnModal(id, borrower, item, qty) {
+    document.getElementById("returnModal").style.display = "block";
 
-        document.getElementById("returnModal").style.display = "block";
+    document.getElementById("borrow_id").value = id;
+    document.getElementById("max_qty").value = qty;
 
-        document.getElementById("borrow_id").value = id;
-        document.getElementById("max_qty").value = qty;
+    document.getElementById("m_borrower").innerText = borrower;
+    document.getElementById("m_item").innerText = item;
+    document.getElementById("m_qty").innerText = qty;
 
-        document.getElementById("m_borrower").innerText = borrower;
-        document.getElementById("m_item").innerText = item;
-        document.getElementById("m_qty").innerText = qty;
+    if (qty > 1) {
+        document.getElementById("return_qty").style.display = "block";
+        document.getElementById("return_qty").value = qty;
+        document.getElementById("return_qty").max = qty;
+        document.getElementById("returnText").innerText = "Select how many to return";
+    } else {
+        document.getElementById("return_qty").style.display = "none";
+        document.getElementById("returnText").innerText = "Confirm return?";
+    }
+}
 
-        if (qty > 1) {
-            document.getElementById("return_qty").style.display = "block";
-            document.getElementById("return_qty").value = qty;
-            document.getElementById("return_qty").max = qty;
+function closeReturn() {
+    document.getElementById("returnModal").style.display = "none";
+}
 
-            document.getElementById("returnText").innerText =
-                "Select how many to return";
+function submitReturn() {
+    let id = document.getElementById("borrow_id").value;
+    let max = document.getElementById("max_qty").value;
+    let qtyInput = document.getElementById("return_qty");
+
+    let qty = (qtyInput.style.display === "none") ? 1 : parseInt(qtyInput.value);
+
+    if (qty > max) {
+        alert("Cannot return more than borrowed quantity.");
+        return;
+    }
+
+    fetch("processReturn.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "id=" + id + "&qty=" + qty
+    })
+    .then(res => res.text())
+    .then(data => {
+        if (data === "success") {
+            location.reload();
         } else {
-            document.getElementById("return_qty").style.display = "none";
-            document.getElementById("returnText").innerText =
-                "Confirm return?";
+            alert(data);
         }
-    }
+    });
+}
 
-    function closeReturn() {
-        document.getElementById("returnModal").style.display = "none";
-    }
+/* ===== TIME IN ===== */
+function openTimeInModal() {
+    let name = document.querySelector("input[name='name']").value;
+    if (!name) return alert("Enter name first");
 
-    function submitReturn() {
+    document.getElementById("timeInName").innerText = name;
+    document.getElementById("timeInModal").style.display = "block";
+}
 
-        let id = document.getElementById("borrow_id").value;
-        let max = document.getElementById("max_qty").value;
-        let qtyInput = document.getElementById("return_qty");
+function closeTimeInModal() {
+    document.getElementById("timeInModal").style.display = "none";
+}
 
-        let qty = (qtyInput.style.display === "none") ? 1 : parseInt(qtyInput.value);
+function submitTimeIn() {
+    let form = document.querySelector("form");
 
-        if (qty > max) {
-            alert("Cannot return more than borrowed quantity.");
-            return;
-        }
+    let hidden = document.createElement("input");
+    hidden.type = "hidden";
+    hidden.name = "time_in";
+    hidden.value = "1";
 
-        if (!confirm("Do you really want to return the equipment?")) {
-            return;
-        }
+    form.appendChild(hidden);
+    form.submit();
+}
 
-        fetch("processReturn.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: "id=" + id + "&qty=" + qty
-        })
-            .then(res => res.text())
-            .then(data => {
-                if (data === "success") {
-                    location.reload();
-                } else {
-                    alert(data);
-                }
-            });
-    }
+/* ===== TIME OUT ===== */
+function openTimeOutModal() {
+    let name = document.querySelector("input[name='name']").value;
+    if (!name) return alert("Enter name first");
+
+    document.getElementById("timeOutName").innerText = name;
+    document.getElementById("timeOutModal").style.display = "block";
+}
+
+function closeTimeOutModal() {
+    document.getElementById("timeOutModal").style.display = "none";
+}
+
+function submitTimeOut() {
+    let form = document.querySelector("form");
+
+    let hidden = document.createElement("input");
+    hidden.type = "hidden";
+    hidden.name = "time_out";
+    hidden.value = "1";
+
+    form.appendChild(hidden);
+    form.submit();
+}
 </script>
-
-<script>
-    //FOR THE DRAG OF MODAL
-    let modal = document.getElementById("returnModal");
-    let header = document.getElementById("modalHeader");
-
-    let isDragging = false;
-    let offsetX, offsetY;
-
-    header.addEventListener("mousedown", function (e) {
-        isDragging = true;
-
-        offsetX = e.clientX - modal.offsetLeft;
-        offsetY = e.clientY - modal.offsetTop;
-    });
-
-    document.addEventListener("mousemove", function (e) {
-        if (isDragging) {
-            modal.style.left = (e.clientX - offsetX) + "px";
-            modal.style.top = (e.clientY - offsetY) + "px";
-            modal.style.transform = "none";
-        }
-    });
-
-    document.addEventListener("mouseup", function () {
-        isDragging = false;
-    });
-</script>
-
-</body>
-
-</html>

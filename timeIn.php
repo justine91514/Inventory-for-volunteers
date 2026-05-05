@@ -63,7 +63,7 @@ if (isset($_POST['time_in'])) {
                     <?php endwhile; ?>
             </datalist>
 
-            <button type="submit" name="time_in">
+            <button type="button" onclick="openTimeInModal()">
                 ✔ Submit Time In
             </button>
 
@@ -72,4 +72,27 @@ if (isset($_POST['time_in'])) {
     </div>
 
 </div>
+
+<div id="timeInModal" class="modal">
+    <div class="modal-box">
+
+        <div class="modal-header" id="timeInHeader">
+            <h3>Time In Confirmation</h3>
+            <span onclick="closeTimeInModal()">✖</span>
+        </div>
+
+        <div class="modal-body">
+            <p>Confirm Time In for:</p>
+            <h4 id="timeInName"></h4>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-confirm" onclick="submitTimeIn()">Confirm</button>
+            <button class="btn-cancel" onclick="closeTimeInModal()">Cancel</button>
+        </div>
+
+    </div>
+</div>
+
+
 <?php include 'includes/footer.php'; ?>

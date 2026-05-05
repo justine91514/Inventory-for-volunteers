@@ -79,7 +79,7 @@ if (isset($_POST['time_out'])) {
                     <?php endwhile; ?>
             </datalist>
 
-            <button type="submit" name="time_out">
+            <button type="button" onclick="openTimeOutModal()">
                 ✔ Submit Time Out
             </button>
 
@@ -88,4 +88,26 @@ if (isset($_POST['time_out'])) {
     </div>
 
 </div>
+
+<div id="timeOutModal" class="modal">
+    <div class="modal-box">
+
+        <div class="modal-header" id="timeOutHeader">
+            <h3>Time Out Confirmation</h3>
+            <span onclick="closeTimeOutModal()">✖</span>
+        </div>
+
+        <div class="modal-body">
+            <p>Confirm Time Out for:</p>
+            <h4 id="timeOutName"></h4>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-confirm" onclick="submitTimeOut()">Confirm</button>
+            <button class="btn-cancel" onclick="closeTimeOutModal()">Cancel</button>
+        </div>
+
+    </div>
+</div>
+
 <?php include 'includes/footer.php'; ?>
