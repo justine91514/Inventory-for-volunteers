@@ -275,3 +275,26 @@ document.getElementById("calendarPopup").addEventListener("click", function(e){
     if (e.target === this) closeCalendar();
 });
 </script>
+
+<script>
+document.querySelectorAll(".table-search").forEach(input => {
+    input.addEventListener("keyup", function () {
+
+        let tableId = this.dataset.table;
+        let table = document.getElementById(tableId);
+        let filter = this.value.toLowerCase();
+
+        let rows = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < rows.length; i++) {
+            let rowText = rows[i].innerText.toLowerCase();
+
+            if (rowText.includes(filter)) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    });
+});
+</script>

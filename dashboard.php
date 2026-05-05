@@ -42,6 +42,7 @@ $borrow = $conn->query("
 
     <!-- ===== ATTENDANCE ===== -->
     <div class="card">
+        <input type="text" class="table-search" placeholder="Search attendance..." data-table="attendanceTable">
         <div class="table-header">
             <h3>Attendance Logs</h3>
 
@@ -57,7 +58,7 @@ $borrow = $conn->query("
         </div>
 
         <div class="table-wrapper">
-            <table class="table">
+            <table class="table" id="attendanceTable">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -92,10 +93,11 @@ $borrow = $conn->query("
 
     <!-- ===== INVENTORY ===== -->
     <div class="card">
+        <input type="text" class="table-search" placeholder="Search inventory..." data-table="inventoryTable">
         <h3>Inventory Status</h3>
 
         <div class="table-wrapper">
-            <table class="table">
+            <table class="table" id="inventoryTable">
                 <thead>
                     <tr>
                         <th>Item</th>
@@ -124,10 +126,11 @@ $borrow = $conn->query("
     </div>
     <!-- ===== BORROWED ITEMS ===== -->
     <div class="card">
+        <input type="text" class="table-search" placeholder="Search borrowed items..." data-table="borrowTable">
         <h3>Borrowed Items</h3>
 
         <div class="table-wrapper">
-            <table class="table">
+            <table class="table" id="borrowTable">
                 <thead>
                     <tr>
                         <th>Borrower</th>

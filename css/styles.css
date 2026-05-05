@@ -396,6 +396,23 @@ body {
     font-size: 13px;
 }
 
+
+/* search box */
+.table-search {
+    width: 100%;
+    max-width: 250px;
+    padding: 8px 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    font-size: 13px;
+}
+
+.table-search:focus {
+    border-color: #2c3e50;
+}
+
 /* =============================================================== */
 
 /* ===== FORM PAGES (TIME IN / TIME OUT) ===== */
