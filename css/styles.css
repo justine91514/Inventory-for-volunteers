@@ -239,3 +239,87 @@ body {
 
 /* =============================================================== */
 
+/* ===== FORM PAGES (TIME IN / TIME OUT) ===== */
+
+/* ===== AUTH CARD (TIME IN / OUT DESIGN) ===== */
+.auth-card {
+    max-width: 420px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 100px;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+/* HEADER */
+.auth-header h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #2c3e50;
+}
+
+.auth-header p {
+    margin: 5px 0 20px;
+    color: #777;
+    font-size: 13px;
+}
+
+/* LABEL */
+.auth-card label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    font-size: 13px;
+    color: #444;
+}
+
+/* INPUT */
+.auth-card input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.auth-card input:focus {
+    border-color: #3498db;
+}
+
+/* BUTTON */
+.auth-card button {
+    width: 100%;
+    padding: 12px;
+    background: #2c3e50;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.auth-card button:hover {
+    background: #34495e;
+}
+
+/* ALERTS */
+.alert {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.alert.error {
+    background: #ffe6e6;
+    color: #e74c3c;
+}
+
+.alert.success {
+    background: #e6ffed;
+    color: #27ae60;
+}

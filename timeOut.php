@@ -52,29 +52,41 @@ if (isset($_POST['time_out'])) {
 ?>
 
 <div class="main-content">
-    <h1>Time Out</h1>
 
-    <?php if ($error): ?>
-        <p style="color:red;"><?= $error ?></p>
-    <?php endif; ?>
+    <div class="auth-card">
 
-    <?php if ($success): ?>
-        <p style="color:green;"><?= $success ?></p>
-    <?php endif; ?>
+        <div class="auth-header">
+            <h2>🔴 Time Out</h2>
+            <p>Record exit time</p>
+            </button>
+        </div>
 
-    <form method="POST">
+        <?php if ($error): ?>
+            <div class="alert error"><?= $error ?></div>
+        <?php endif; ?>
 
-        <!-- ✅ AUTOCOMPLETE INPUT -->
-        <input list="nameList" name="name" placeholder="Enter Name" required>
+        <?php if ($success): ?>
+            <div class="alert success"><?= $success ?></div>
+        <?php endif; ?>
 
-        <datalist id="nameList">
-            <?php while ($row = $names->fetch_assoc()): ?>
-                <option value="<?= $row['volunteer_name'] ?>">
-            <?php endwhile; ?>
-        </datalist>
+        <form method="POST">
 
-        <button type="submit" name="time_out">Time Out</button>
-    </form>
+            <label>Volunteer Name</label>
+            <input list="nameList" name="name" placeholder="Enter name..." required>
+
+            <datalist id="nameList">
+                <?php while ($row = $names->fetch_assoc()): ?>
+                    <option value="<?= $row['volunteer_name'] ?>">
+                    <?php endwhile; ?>
+            </datalist>
+
+            <button type="submit" name="time_in">
+                ✔ Submit Time Out
+            </button>
+
+        </form>
+
+    </div>
+
 </div>
-
 <?php include 'includes/footer.php'; ?>
