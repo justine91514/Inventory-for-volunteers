@@ -93,6 +93,9 @@ if (isset($_POST['borrow'])) {
 
         if (!$error) {
             $success = "$name successfully borrowed selected items.";
+
+            header("Location: requestEquipment.php?success=1");
+            exit;
         }
     }
 }
@@ -100,15 +103,15 @@ if (isset($_POST['borrow'])) {
 
 <div class="main-content">
 
-    <h2>Borrow Items</h2>
+    <h2>Borrow Equipment</h2>
 
     <!-- MESSAGES -->
     <?php if ($error): ?>
         <p class="error"><?= $error ?></p>
     <?php endif; ?>
 
-    <?php if ($success): ?>
-        <p class="success"><?= $success ?></p>
+    <?php if (isset($_GET['success'])): ?>
+        <p class="success">Borrow successful!</p>
     <?php endif; ?>
 
     <!-- FORM -->
@@ -161,7 +164,7 @@ if (isset($_POST['borrow'])) {
 
         <br>
 
-        <button type="submit" name="borrow">Borrow Selected</button>
+        <button type="submit" name="borrow">Equipment Selected</button>
 
     </form>
 
@@ -210,4 +213,5 @@ if (isset($_POST['borrow'])) {
         }
     }
 </script>
+
 <?php include 'includes/footer.php'; ?>

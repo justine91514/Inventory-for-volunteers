@@ -33,7 +33,7 @@
         <li>
             <a href="requestEquipment.php">
                 <i class="fas fa-hand-holding"></i>
-                <span>Request</span>
+                <span>Request Equipment</span>
             </a>
         </li>
 
