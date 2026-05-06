@@ -18,16 +18,38 @@ if (isset($_POST['borrow'])) {
     $qtys = $_POST['qty'] ?? [];
     $today = date("Y-m-d");
 
-    // CHECK TIME-IN
-    $check = $conn->query("
+    // ===== CHECK ATTENDANCE =====
+
+    // check if may time in today
+    $checkIn = $conn->query("
+    SELECT * FROM attendance 
+    WHERE volunteer_name = '$name' 
+    AND attendance_date = '$today'
+");
+
+    if ($checkIn->num_rows == 0) {
+
+        $error = "You must time in first.";
+
+    } else {
+
+        // check if active (no timeout yet)
+        $active = $conn->query("
         SELECT * FROM attendance 
         WHERE volunteer_name = '$name' 
         AND attendance_date = '$today'
+        AND time_out IS NULL
     ");
 
-    if ($check->num_rows == 0) {
-        $error = "You must time in first before borrowing.";
-    } elseif (empty($selected)) {
+        if ($active->num_rows == 0) {
+            $error = "You already timed out. Borrowing not allowed.";
+        }
+    }
+
+    // ===== CONTINUE ONLY IF NO ERROR =====
+    if (!$error && empty($selected)) {
+        $error = "No items selected.";
+    } elseif (!$error) {
         $error = "No items selected.";
     } else {
 
