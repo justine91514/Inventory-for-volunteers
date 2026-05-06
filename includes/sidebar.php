@@ -9,6 +9,7 @@
     </div>
 
     <ul class="menu">
+        <!-- OTHER MENU -->
         <li>
             <a href="dashboard.php">
                 <i class="fas fa-home"></i>
@@ -51,19 +52,40 @@
             </a>
         </li>
 
-        <li>
-            <a href="settings.php">
+        <!-- SETTINGS DROPDOWN -->
+        <li class="dropdown">
+            <a href="javascript:void(0)" onclick="toggleSettings()">
                 <i class="fas fa-cog"></i>
                 <span>Settings</span>
+                <i class="fas fa-chevron-down arrow"></i>
             </a>
+
+            <ul class="dropdown-menu" id="settingsDropdown">
+                <li><a href="rename.php">Rename</a></li>
+                <li><a href="user_management.php">User Management</a></li>
+            </ul>
         </li>
 
-        <li>
-            <a href="#">
-                <i class="fas fa-file-alt"></i>
-                <span>Reports</span>
+        <!-- PUSH LOGOUT TO BOTTOM -->
+        <li style="margin-top:auto;">
+            <a href="logout.php">
+                <i class="fas fa-right-from-bracket"></i>
+                <span>Logout</span>
             </a>
         </li>
     </ul>
+    
+    <script>
+        function toggleSettings() {
+            const dropdown = document.getElementById("settingsDropdown");
+            dropdown.parentElement.classList.toggle("open");
 
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+            } else {
+                dropdown.style.display = "block";
+            }
+        }
+    </script>
+    
 </div>
