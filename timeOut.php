@@ -13,38 +13,57 @@ $names = $conn->query("
     WHERE attendance_date = CURDATE()
     AND time_out IS NULL
 ");
+
 if (isset($_POST['time_out'])) {
+
     $name = $_POST['name'];
     $time = date("Y-m-d H:i:s");
     $today = date("Y-m-d");
 
-    // ✅ check if may time-in today
-    $check = $conn->query("SELECT * FROM attendance 
-        WHERE volunteer_name = '$name' 
-        AND DATE(time_in) = '$today'");
+    // 1. CHECK IF MAY ACTIVE BORROWED ITEMS
+    $checkBorrow = $conn->query("
+        SELECT * FROM borrow_records
+        WHERE borrower_name = '$name'
+        AND status = 'borrowed'
+    ");
 
-    if ($check->num_rows == 0) {
-        $error = "this person has not timed in yet.";
-    } else {
+    if ($checkBorrow->num_rows > 0) {
+        $error = "Cannot time out. You still have borrowed items.";
+    }
 
-        // ✅ check if already timed out
-        $check2 = $conn->query("SELECT * FROM attendance 
-            WHERE volunteer_name = '$name' 
-            AND DATE(time_in) = '$today'
-            AND time_out IS NULL");
-
-        if ($check2->num_rows == 0) {
-            $error = $name . " Already timed out.";
-        } else {
-
-            // proceed update
-            $sql = "UPDATE attendance 
-        SET time_out = '$time' 
+    // 2. CHECK IF MAY TIME IN
+    $check = $conn->query("
+        SELECT * FROM attendance 
         WHERE volunteer_name = '$name' 
         AND DATE(time_in) = '$today'
-        AND time_out IS NULL
-        ORDER BY id DESC 
-        LIMIT 1";
+    ");
+
+    if (!$error && $check->num_rows == 0) {
+        $error = "This person has not timed in yet.";
+    }
+
+    // 3. PROCESS TIME OUT
+    if (!$error) {
+
+        // check already timed out
+        $check2 = $conn->query("
+            SELECT * FROM attendance 
+            WHERE volunteer_name = '$name'
+            AND DATE(time_in) = '$today'
+            AND time_out IS NULL
+        ");
+
+        if ($check2->num_rows == 0) {
+            $error = $name . " already timed out.";
+        } else {
+
+            $sql = "UPDATE attendance 
+                    SET time_out = '$time' 
+                    WHERE volunteer_name = '$name' 
+                    AND DATE(time_in) = '$today'
+                    AND time_out IS NULL
+                    ORDER BY id DESC 
+                    LIMIT 1";
 
             if ($conn->query($sql)) {
                 $success = "Time Out recorded!";
@@ -55,7 +74,6 @@ if (isset($_POST['time_out'])) {
     }
 }
 ?>
-
 <div class="main-content">
 
     <div class="auth-card">
