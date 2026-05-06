@@ -3,7 +3,7 @@ include 'includes/db.php';
 
 $id = $_POST['id'];
 $new_name = $_POST['name'];
-$new_total = $_POST['total'];
+$new_total = max(0, (int) $_POST['total']);
 
 // get old item
 $item = $conn->query("SELECT * FROM inventory WHERE id = $id")->fetch_assoc();
