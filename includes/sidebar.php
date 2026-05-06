@@ -52,6 +52,13 @@
         </li>
 
         <li>
+            <a href="settings.php">
+                <i class="fas fa-settings"></i>
+                <span>Settings</span>
+            </a>
+        </li>
+
+        <li>
             <a href="#">
                 <i class="fas fa-file-alt"></i>
                 <span>Reports</span>
@@ -60,4 +67,3 @@
     </ul>
 
 </div>
-
