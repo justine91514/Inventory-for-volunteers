@@ -104,7 +104,7 @@ $items = $conn->query("SELECT * FROM inventory");
 
                 <div class="form-group">
                     <label>Item Name</label>
-                    <input type="text" id="edit_name" disabled>
+                    <input type="text" id="edit_name" required>
                 </div>
 
                 <div class="form-group">
