@@ -9,35 +9,39 @@ date_default_timezone_set('Asia/Manila');
 <?php
 // kuha lahat ng unique names (both tables)
 $names = $conn->query("
-    SELECT volunteer_name AS name FROM attendance
-    UNION
-    SELECT borrower_name AS name FROM borrow_records
+    SELECT DISTINCT name FROM (
+        SELECT volunteer_name AS name FROM attendance
+        UNION ALL
+        SELECT borrower_name AS name FROM borrow_records
+    ) AS combined
+    ORDER BY name ASC
 ");
 ?>
 
 <div class="main-content">
 
-    <div class="card settings-card">
-        <h2>⚙️ Manage Names</h2>
+    <div class="auth-card settings-card">
+
+        <div class="auth-header">
+            <h2>⚙️ Manage Names</h2>
+            <p>Rename volunteers & borrowers</p>
+        </div>
 
         <label>Select Name</label>
-        <select id="old_name">
-            <option value="">-- Select Name --</option>
-            <?php while ($row = $names->fetch_assoc()): ?>
-                <option value="<?= $row['name'] ?>">
-                    <?= $row['name'] ?>
-                </option>
-            <?php endwhile; ?>
-        </select>
+        <div class="dropdown-wrapper">
+            <input type="text" id="old_name" placeholder="Select name..." autocomplete="off">
+            <div id="nameDropdown" class="dropdown-list"></div>
+        </div>
 
         <label>New Name</label>
-        <input type="text" id="new_name" placeholder="Enter new name">
+        <input type="text" id="new_name" placeholder="Enter new name..." autocomplete="off">
 
         <button onclick="openRenameModal()" class="btn-primary">
             Update Name
         </button>
 
         <p id="msg"></p>
+
     </div>
 
 </div>
@@ -65,43 +69,87 @@ $names = $conn->query("
     </div>
 </div>
 <script>
-    function openRenameModal() {
-        let oldName = document.getElementById("old_name").value;
-        let newName = document.getElementById("new_name").value;
+const input = document.getElementById("old_name");
+const dropdown = document.getElementById("nameDropdown");
 
-        if (!oldName || !newName) {
-            alert("Fill all fields");
-            return;
+const names = [
+<?php while ($row = $names->fetch_assoc()): ?>
+    "<?= $row['name'] ?>",
+<?php endwhile; ?>
+];
+
+// show dropdown
+input.addEventListener("focus", showList);
+input.addEventListener("input", showList);
+
+function showList() {
+    let val = input.value.toLowerCase();
+    dropdown.innerHTML = "";
+
+    let filtered = names.filter(n => n.toLowerCase().includes(val));
+
+    filtered.forEach(name => {
+        let div = document.createElement("div");
+        div.textContent = name;
+
+        div.onclick = function () {
+            input.value = name;
+            dropdown.style.display = "none";
+        };
+
+        dropdown.appendChild(div);
+    });
+
+    dropdown.style.display = "block";
+}
+
+// close outside
+document.addEventListener("click", function(e){
+    if (!e.target.closest(".dropdown-wrapper")) {
+        dropdown.style.display = "none";
+    }
+});
+</script>
+
+<script>
+function openRenameModal() {
+    let oldName = document.getElementById("old_name").value.trim();
+    let newName = document.getElementById("new_name").value.trim();
+
+    if (!oldName || !newName) {
+        alert("Fill all fields");
+        return;
+    }
+
+    document.getElementById("oldNameText").innerText = oldName;
+    document.getElementById("newNameText").innerText = newName;
+
+    document.getElementById("renameModal").style.display = "flex";
+}
+
+function closeRenameModal() {
+    document.getElementById("renameModal").style.display = "none";
+}
+
+function submitRename() {
+    let oldName = document.getElementById("old_name").value;
+    let newName = document.getElementById("new_name").value;
+
+    fetch("update_name.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "old_name=" + encodeURIComponent(oldName) + 
+              "&new_name=" + encodeURIComponent(newName)
+    })
+    .then(res => res.text())
+    .then(data => {
+        if (data === "success") {
+            location.reload();
+        } else {
+            alert(data);
         }
-
-        document.getElementById("oldNameText").innerText = oldName;
-        document.getElementById("newNameText").innerText = newName;
-
-        document.getElementById("renameModal").style.display = "block";
-    }
-
-    function closeRenameModal() {
-        document.getElementById("renameModal").style.display = "none";
-    }
-
-    function submitRename() {
-        let oldName = document.getElementById("old_name").value;
-        let newName = document.getElementById("new_name").value;
-
-        fetch("update_name.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: "old_name=" + oldName + "&new_name=" + newName
-        })
-            .then(res => res.text())
-            .then(data => {
-                if (data === "success") {
-                    location.reload();
-                } else {
-                    alert(data);
-                }
-            });
-    }
+    });
+}
 </script>
 
 
