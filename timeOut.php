@@ -7,7 +7,12 @@ date_default_timezone_set('Asia/Manila');
 $error = "";
 $success = "";
 
-$names = $conn->query("SELECT DISTINCT volunteer_name FROM attendance");
+$names = $conn->query("
+    SELECT DISTINCT volunteer_name 
+    FROM attendance
+    WHERE attendance_date = CURDATE()
+    AND time_out IS NULL
+");
 if (isset($_POST['time_out'])) {
     $name = $_POST['name'];
     $time = date("Y-m-d H:i:s");
@@ -71,25 +76,11 @@ if (isset($_POST['time_out'])) {
         <form method="POST">
 
             <label>Volunteer Name</label>
-            <input type="text" id="timeOutInput" name="name" placeholder="Select name..." readonly required
-                onclick="toggleDropdown()">
             <div class="dropdown-wrapper">
-                <div id="timeOutDropdown" class="dropdown-list">
-                    <?php
-                    $active = $conn->query("
-            SELECT DISTINCT volunteer_name 
-            FROM attendance 
-            WHERE time_out IS NULL 
-            AND attendance_date = CURDATE()
-        ");
+                <input type="text" id="timeOutInput" name="name" placeholder="Enter name..." autocomplete="off"
+                    required>
 
-                    while ($row = $active->fetch_assoc()):
-                        ?>
-                        <div class="dropdown-item" onclick="selectName('<?= $row['volunteer_name'] ?>')">
-                            <?= $row['volunteer_name'] ?>
-                        </div>
-                    <?php endwhile; ?>
-                </div>
+                <div id="dropdownList" class="dropdown-list"></div>
             </div>
 
             <button type="button" onclick="openTimeOutModal()">
@@ -123,27 +114,47 @@ if (isset($_POST['time_out'])) {
     </div>
 </div>
 
-
 <script>
-    function toggleDropdown() {
-        let dd = document.getElementById("timeOutDropdown");
-        dd.style.display = dd.style.display === "block" ? "none" : "block";
-    }
+const input = document.getElementById("timeOutInput");
+const dropdown = document.getElementById("dropdownList");
 
-    function selectName(name) {
-        document.getElementById("timeOutInput").value = name;
-        document.getElementById("timeOutDropdown").style.display = "none";
+// PHP data into JS
+const names = [
+    <?php while ($row = $names->fetch_assoc()): ?>
+        "<?= $row['volunteer_name'] ?>",
+    <?php endwhile; ?>
+];
 
-        document.getElementById("timeOutName").innerText = name;
-    }
+// show dropdown
+input.addEventListener("focus", showList);
+input.addEventListener("input", showList);
 
-    document.addEventListener("click", function (e) {
-        let input = document.getElementById("timeOutInput");
-        let dd = document.getElementById("timeOutDropdown");
+function showList() {
+    let val = input.value.toLowerCase();
+    dropdown.innerHTML = "";
 
-        if (!input.contains(e.target) && !dd.contains(e.target)) {
-            dd.style.display = "none";
-        }
+    let filtered = names.filter(n => n.toLowerCase().includes(val));
+
+    filtered.forEach(name => {
+        let div = document.createElement("div");
+        div.textContent = name;
+
+        div.onclick = function () {
+            input.value = name;
+            dropdown.innerHTML = "";
+        };
+
+        dropdown.appendChild(div);
     });
+
+    dropdown.style.display = "block";
+}
+
+// close when clicking outside
+document.addEventListener("click", function(e){
+    if (!e.target.closest(".dropdown-wrapper")) {
+        dropdown.style.display = "none";
+    }
+});
 </script>
 <?php include 'includes/footer.php'; ?>

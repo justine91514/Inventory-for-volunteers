@@ -276,45 +276,45 @@ if (isset($_POST['borrow'])) {
 </script>
 
 <script>
-function toggleBorrowerDropdown() {
-    document.getElementById("borrowerDropdown").style.display = "block";
-}
+    function toggleBorrowerDropdown() {
+        document.getElementById("borrowerDropdown").style.display = "block";
+    }
 
-function selectBorrower(name) {
-    document.getElementById("borrowerName").value = name;
-    document.getElementById("borrowerDropdown").style.display = "none";
-}
+    function selectBorrower(name) {
+        document.getElementById("borrowerName").value = name;
+        document.getElementById("borrowerDropdown").style.display = "none";
+    }
 
-// 🔥 LIVE SEARCH FILTER
-function filterBorrowers() {
-    let input = document.getElementById("borrowerName").value.toLowerCase();
-    let items = document.querySelectorAll("#borrowerDropdown .dropdown-item");
+    // 🔥 LIVE SEARCH FILTER
+    function filterBorrowers() {
+        let input = document.getElementById("borrowerName").value.toLowerCase();
+        let items = document.querySelectorAll("#borrowerDropdown .dropdown-item");
 
-    let hasMatch = false;
+        let hasMatch = false;
 
-    items.forEach(item => {
-        let text = item.textContent.toLowerCase();
+        items.forEach(item => {
+            let text = item.textContent.toLowerCase();
 
-        if (text.includes(input)) {
-            item.style.display = "block";
-            hasMatch = true;
-        } else {
-            item.style.display = "none";
+            if (text.includes(input)) {
+                item.style.display = "block";
+                hasMatch = true;
+            } else {
+                item.style.display = "none";
+            }
+        });
+
+        document.getElementById("borrowerDropdown").style.display = hasMatch ? "block" : "none";
+    }
+
+    // close when clicking outside
+    document.addEventListener("click", function (e) {
+        let input = document.getElementById("borrowerName");
+        let dd = document.getElementById("borrowerDropdown");
+
+        if (!input.contains(e.target) && !dd.contains(e.target)) {
+            dd.style.display = "none";
         }
     });
-
-    document.getElementById("borrowerDropdown").style.display = hasMatch ? "block" : "none";
-}
-
-// close when clicking outside
-document.addEventListener("click", function(e){
-    let input = document.getElementById("borrowerName");
-    let dd = document.getElementById("borrowerDropdown");
-
-    if (!input.contains(e.target) && !dd.contains(e.target)) {
-        dd.style.display = "none";
-    }
-});
 </script>
 
 <?php include 'includes/footer.php'; ?>
