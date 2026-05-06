@@ -49,11 +49,27 @@ $borrow = $conn->query("
             <div class="date-nav">
                 <a class="nav-btn" href="?date=<?= date('Y-m-d', strtotime($date . ' -1 day')) ?>">⬅</a>
 
+                <!-- CALENDAR BUTTON -->
+                <input type="date" id="calendarPicker" value="<?= $date ?>" style="display:none;">
                 <button type="button" class="date-btn" onclick="toggleCalendar()">
                     <?= date("F d, Y", strtotime($date)) ?>
                 </button>
 
                 <a class="nav-btn" href="?date=<?= date('Y-m-d', strtotime($date . ' +1 day')) ?>">➡</a>
+            </div>
+        </div>
+
+        <div id="calendarPopup" class="calendar-popup">
+            <div class="calendar-box">
+
+                <div class="calendar-header">
+                    <button onclick="changeMonth(-1)">‹</button>
+                    <span id="calMonth"></span>
+                    <button onclick="changeMonth(1)">›</button>
+                </div>
+
+                <div class="calendar-grid" id="calendarGrid"></div>
+
             </div>
         </div>
 
