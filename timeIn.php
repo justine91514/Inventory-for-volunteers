@@ -7,8 +7,6 @@ date_default_timezone_set('Asia/Manila');
 $error = "";
 $success = "";
 
-$names = $conn->query("SELECT DISTINCT volunteer_name FROM attendance");
-
 if (isset($_POST['time_in'])) {
     $name = trim($_POST['name']);
     $time = date("Y-m-d H:i:s");
@@ -55,14 +53,7 @@ if (isset($_POST['time_in'])) {
         <form method="POST">
 
             <label>Volunteer Name</label>
-            <input list="nameList" name="name" placeholder="Enter name..." required>
-
-            <datalist id="nameList">
-                <?php while ($row = $names->fetch_assoc()): ?>
-                    <option value="<?= $row['volunteer_name'] ?>">
-                    <?php endwhile; ?>
-            </datalist>
-
+            <input type="text" name="name" placeholder="Enter name..." required autocomplete="off">
             <button type="button" onclick="openTimeInModal()">
                 ✔ Submit Time In
             </button>

@@ -71,13 +71,26 @@ if (isset($_POST['time_out'])) {
         <form method="POST">
 
             <label>Volunteer Name</label>
-            <input list="nameList" name="name" placeholder="Enter name..." required>
+            <input type="text" id="timeOutInput" name="name" placeholder="Select name..." readonly required
+                onclick="toggleDropdown()">
+            <div class="dropdown-wrapper">
+                <div id="timeOutDropdown" class="dropdown-list">
+                    <?php
+                    $active = $conn->query("
+            SELECT DISTINCT volunteer_name 
+            FROM attendance 
+            WHERE time_out IS NULL 
+            AND attendance_date = CURDATE()
+        ");
 
-            <datalist id="nameList">
-                <?php while ($row = $names->fetch_assoc()): ?>
-                    <option value="<?= $row['volunteer_name'] ?>">
+                    while ($row = $active->fetch_assoc()):
+                        ?>
+                        <div class="dropdown-item" onclick="selectName('<?= $row['volunteer_name'] ?>')">
+                            <?= $row['volunteer_name'] ?>
+                        </div>
                     <?php endwhile; ?>
-            </datalist>
+                </div>
+            </div>
 
             <button type="button" onclick="openTimeOutModal()">
                 ✔ Submit Time Out
@@ -110,4 +123,27 @@ if (isset($_POST['time_out'])) {
     </div>
 </div>
 
+
+<script>
+    function toggleDropdown() {
+        let dd = document.getElementById("timeOutDropdown");
+        dd.style.display = dd.style.display === "block" ? "none" : "block";
+    }
+
+    function selectName(name) {
+        document.getElementById("timeOutInput").value = name;
+        document.getElementById("timeOutDropdown").style.display = "none";
+
+        document.getElementById("timeOutName").innerText = name;
+    }
+
+    document.addEventListener("click", function (e) {
+        let input = document.getElementById("timeOutInput");
+        let dd = document.getElementById("timeOutDropdown");
+
+        if (!input.contains(e.target) && !dd.contains(e.target)) {
+            dd.style.display = "none";
+        }
+    });
+</script>
 <?php include 'includes/footer.php'; ?>

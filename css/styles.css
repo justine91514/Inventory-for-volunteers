@@ -529,6 +529,32 @@ body {
     color: #27ae60;
 }
 
+.dropdown-list {
+    display: none;
+    position: absolute;
+    background: #fff;
+    width: 250px;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-top: 5px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.dropdown-item:hover {
+    background: #2c3e50;
+    color: white;
+}
+
+
 /* =============================================================== */
 
 /* ===== REQUEST EQUIPMENT PAGE ===== */
