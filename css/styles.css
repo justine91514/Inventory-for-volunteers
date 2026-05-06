@@ -441,6 +441,7 @@ body {
     border-color: #2c3e50;
 }
 
+
 /* =============================================================== */
 
 /* ===== FORM PAGES (TIME IN / TIME OUT) ===== */
@@ -780,12 +781,21 @@ h1 {
 
 
 .modal {
-    display: none;
+    display: none; /* 🔥 important */
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* ✅ perfect center */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    /* ❌ remove blur/dark */
+    background: transparent;
+
     z-index: 999;
+
+    /* center */
+    justify-content: center;
+    align-items: center;
 }
 
 /* BOX */
@@ -793,7 +803,6 @@ h1 {
     width: 380px;
     background: #fff;
     border-radius: 10px;
-    overflow: hidden;
     box-shadow: 0 5px 20px rgba(0,0,0,0.3);
 }
 
@@ -1077,4 +1086,112 @@ table button:last-child:hover {
 
 .btn-close:hover {
     background: #c0392b;
+}
+
+/* SETTINGS CARD */
+.settings-card {
+    max-width: 400px;
+    margin: auto;
+    text-align: left;
+}
+
+.settings-card h2 {
+    margin-bottom: 15px;
+}
+
+.settings-card label {
+    display: block;
+    margin-top: 10px;
+    font-weight: 600;
+    color: #555;
+}
+
+.settings-card input,
+.settings-card select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+/* BUTTON */
+.btn-primary {
+    margin-top: 15px;
+    width: 100%;
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background: #1f2d3d;
+}
+
+/* MODAL (reuse style mo but cleaner center) */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 999;
+}
+
+/* CENTER */
+.modal-box {
+    width: 350px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* HEADER */
+.modal-header {
+    background: #2c3e50;
+    color: white;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* BODY */
+.modal-body {
+    padding: 20px;
+    text-align: center;
+}
+
+/* FOOTER */
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px;
+}
+
+/* BUTTONS */
+.btn-confirm {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
 }
