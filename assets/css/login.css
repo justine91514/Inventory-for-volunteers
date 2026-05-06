@@ -51,18 +51,38 @@ body {
 
 
 
-.login-box select {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    background: white;
-    outline: none;
+
+/* dropdown wrapper */
+.dropdown-wrapper {
+    position: relative;
 }
 
-.login-box select:focus {
-    border-color: #2c3e50;
-    box-shadow: 0 0 5px rgba(44,62,80,0.2);
+/* dropdown box */
+.dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    max-height: 180px;
+    overflow-y: auto;
+
+    display: none;
+    z-index: 10;
+}
+
+/* dropdown items */
+.dropdown-list div {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.dropdown-list div:hover {
+    background: #2c3e50;
+    color: #fff;
 }

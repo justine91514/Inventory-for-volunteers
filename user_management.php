@@ -9,26 +9,37 @@ $message = "";
 // ADD USER
 if (isset($_POST['add_user'])) {
     $username = trim($_POST['username']);
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $password = $_POST['password'];
+    //$password = password_hash($_POST['password'],
+    //this is for hashing passwords, if you return this edit, check the login.php
 
-    // check duplicate
-    $check = $conn->query("SELECT * FROM users WHERE username = '$username'");
-
-    if ($check->num_rows > 0) {
-        $message = "User already exists";
+    
+    // ✅ Gmail format validation
+    if (!preg_match("/^[a-zA-Z0-9._%+-]+@gmail\.com$/", $username)) {
+        $message = "Username must be a valid Gmail address";
     } else {
-        $conn->query("
-            INSERT INTO users (username, password)
-            VALUES ('$username', '$password')
-        ");
-        $message = "User added successfully";
+
+        // check duplicate
+        $check = $conn->query("SELECT * FROM users WHERE username = '$username'");
+
+        if ($check->num_rows > 0) {
+            $message = "User already exists";
+        } else {
+
+            // ❌ NO HASH (as requested)
+            $conn->query("
+                INSERT INTO users (username, password)
+                VALUES ('$username', '$password')
+            ");
+
+            $message = "User added successfully";
+        }
     }
 }
 
 // GET USERS
 $users = $conn->query("SELECT * FROM users ORDER BY id DESC");
 ?>
-
 <div class="main-content">
 
     <div class="auth-card settings-card">
