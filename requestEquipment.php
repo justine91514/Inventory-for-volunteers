@@ -18,106 +18,98 @@ if (isset($_POST['borrow'])) {
     $qtys = $_POST['qty'] ?? [];
     $today = date("Y-m-d");
 
-    // ===== CHECK ATTENDANCE =====
+    // reset error
+    $error = "";
 
-    // check if may time in today
+    // ===== ATTENDANCE CHECK =====
+
     $checkIn = $conn->query("
-    SELECT * FROM attendance 
-    WHERE volunteer_name = '$name' 
-    AND attendance_date = '$today'
-");
+        SELECT * FROM attendance 
+        WHERE volunteer_name = '$name' 
+        AND attendance_date = '$today'
+    ");
 
     if ($checkIn->num_rows == 0) {
-
         $error = "You must time in first.";
+    }
 
-    } else {
-
-        // check if active (no timeout yet)
-        $active = $conn->query("
+    $active = $conn->query("
         SELECT * FROM attendance 
         WHERE volunteer_name = '$name' 
         AND attendance_date = '$today'
         AND time_out IS NULL
     ");
 
-        if ($active->num_rows == 0) {
-            $error = "You already timed out. Borrowing not allowed.";
-        }
+    if (!$error && $active->num_rows == 0) {
+        $error = "You already timed out. Borrowing not allowed.";
     }
 
-    // ===== CONTINUE ONLY IF NO ERROR =====
-    if (!$error && empty($selected)) {
-        $error = "No items selected.";
-    } elseif (!$error) {
-        $error = "No items selected.";
-    } else {
+    // ===== BORROW PROCESS =====
+    if (!$error) {
 
-        foreach ($selected as $item) {
+        if (empty($selected)) {
+            $error = "No items selected.";
+        } else {
 
-            $qty = (int) ($qtys[$item] ?? 0);
+            foreach ($selected as $item) {
 
-            if ($qty <= 0)
-                continue;
+                $qty = (int) ($qtys[$item] ?? 0);
+                if ($qty <= 0)
+                    continue;
 
-            // GET INVENTORY
-            $inv = $conn->query("
-                SELECT * FROM inventory 
-                WHERE item_name = '$item'
-            ");
-            $row = $inv->fetch_assoc();
+                $inv = $conn->query("
+                    SELECT * FROM inventory 
+                    WHERE item_name = '$item'
+                ");
+                $row = $inv->fetch_assoc();
 
-            if (!$row)
-                continue;
+                if (!$row)
+                    continue;
 
-            // CHECK STOCK
-            if ($row['available_qty'] < $qty) {
-                $error .= "$item not enough stock. ";
-                continue;
+                if ($row['available_qty'] < $qty) {
+                    $error .= "$item not enough stock. ";
+                    continue;
+                }
+
+                // deduct stock
+                $conn->query("
+                    UPDATE inventory 
+                    SET available_qty = available_qty - $qty 
+                    WHERE item_name = '$item'
+                ");
+
+                // check existing borrow
+                $existing = $conn->query("
+                    SELECT * FROM borrow_records 
+                    WHERE borrower_name = '$name'
+                    AND item_name = '$item'
+                    AND status = 'borrowed'
+                ");
+
+                if ($existing->num_rows > 0) {
+
+                    $conn->query("
+                        UPDATE borrow_records
+                        SET quantity = quantity + $qty
+                        WHERE borrower_name = '$name'
+                        AND item_name = '$item'
+                        AND status = 'borrowed'
+                    ");
+
+                } else {
+
+                    $conn->query("
+                        INSERT INTO borrow_records 
+                        (borrower_name, item_name, quantity, borrow_date, status)
+                        VALUES ('$name', '$item', $qty, NOW(), 'borrowed')
+                    ");
+                }
             }
 
-            // UPDATE STOCK
-            $conn->query("
-                UPDATE inventory 
-                SET available_qty = available_qty - $qty 
-                WHERE item_name = '$item'
-            ");
-
-            // CHECK IF SAME ITEM ALREADY BORROWED BY USER
-            $existing = $conn->query("
-    SELECT * FROM borrow_records 
-    WHERE borrower_name = '$name'
-    AND item_name = '$item'
-    AND status = 'borrowed'
-");
-
-            if ($existing->num_rows > 0) {
-
-                // UPDATE EXISTING (ADD QUANTITY)
-                $conn->query("
-        UPDATE borrow_records
-        SET quantity = quantity + $qty
-        WHERE borrower_name = '$name'
-        AND item_name = '$item'
-        AND status = 'borrowed'
-    ");
-
-            } else {
-
-                // INSERT NEW
-                $conn->query("
-        INSERT INTO borrow_records 
-        (borrower_name, item_name, quantity, borrow_date, status)
-        VALUES ('$name', '$item', $qty, NOW(), 'borrowed')
-    ");
+            if (!$error) {
+                header("Location: requestEquipment.php?success=1");
+                exit;
             }
-        }
-
-        if (!$error) {
-            $success = "$name successfully borrowed selected items.";
-
-            header("Location: requestEquipment.php?success=1");
-            exit;
         }
     }
 }
@@ -160,7 +152,7 @@ if (isset($_POST['borrow'])) {
 
                         <td>
                             <input type="checkbox" name="selected_items[]" value="<?= $i['item_name'] ?>" class="item-check"
-                                <?= $isOut ? 'disabled' : 'disabled' ?>>
+                                <?= $isOut ? 'disabled' : '' ?>>
                         </td>
 
                         <td><?= $i['item_name'] ?></td>
