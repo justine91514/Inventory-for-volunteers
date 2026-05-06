@@ -131,7 +131,29 @@ if (isset($_POST['borrow'])) {
     <!-- FORM -->
     <form method="POST">
 
-        <input type="text" id="borrowerName" name="name" placeholder="Borrower Name" required>
+        <div class="dropdown-wrapper">
+
+            <input type="text" id="borrowerName" name="name" placeholder="Search borrower..."
+                onkeyup="filterBorrowers()" onclick="toggleBorrowerDropdown()" autocomplete="off" required>
+
+            <div id="borrowerDropdown" class="dropdown-list">
+                <?php
+                $activeUsers = $conn->query("
+            SELECT DISTINCT volunteer_name 
+            FROM attendance 
+            WHERE attendance_date = CURDATE()
+            AND time_out IS NULL
+        ");
+
+                while ($row = $activeUsers->fetch_assoc()):
+                    ?>
+                    <div class="dropdown-item" onclick="selectBorrower('<?= $row['volunteer_name'] ?>')">
+                        <?= $row['volunteer_name'] ?>
+                    </div>
+                <?php endwhile; ?>
+            </div>
+
+        </div>
 
         <table class="inventory-table">
 
@@ -186,6 +208,7 @@ if (isset($_POST['borrow'])) {
 
 
 <script>
+    //script for checkbox in requestEquipment
     const nameInput = document.getElementById("borrowerName");
     const checkboxes = document.querySelectorAll(".item-check");
 
@@ -226,6 +249,72 @@ if (isset($_POST['borrow'])) {
             qty.value = 1;
         }
     }
+</script>
+
+
+<script>
+    //script for dropdaown in requestEquipment
+    function toggleBorrowerDropdown() {
+        let dd = document.getElementById("borrowerDropdown");
+        dd.style.display = dd.style.display === "block" ? "none" : "block";
+    }
+
+    function selectBorrower(name) {
+        document.getElementById("borrowerName").value = name;
+        document.getElementById("borrowerDropdown").style.display = "none";
+    }
+
+    // close when clicking outside
+    document.addEventListener("click", function (e) {
+        let input = document.getElementById("borrowerName");
+        let dd = document.getElementById("borrowerDropdown");
+
+        if (!input.contains(e.target) && !dd.contains(e.target)) {
+            dd.style.display = "none";
+        }
+    });
+</script>
+
+<script>
+function toggleBorrowerDropdown() {
+    document.getElementById("borrowerDropdown").style.display = "block";
+}
+
+function selectBorrower(name) {
+    document.getElementById("borrowerName").value = name;
+    document.getElementById("borrowerDropdown").style.display = "none";
+}
+
+// 🔥 LIVE SEARCH FILTER
+function filterBorrowers() {
+    let input = document.getElementById("borrowerName").value.toLowerCase();
+    let items = document.querySelectorAll("#borrowerDropdown .dropdown-item");
+
+    let hasMatch = false;
+
+    items.forEach(item => {
+        let text = item.textContent.toLowerCase();
+
+        if (text.includes(input)) {
+            item.style.display = "block";
+            hasMatch = true;
+        } else {
+            item.style.display = "none";
+        }
+    });
+
+    document.getElementById("borrowerDropdown").style.display = hasMatch ? "block" : "none";
+}
+
+// close when clicking outside
+document.addEventListener("click", function(e){
+    let input = document.getElementById("borrowerName");
+    let dd = document.getElementById("borrowerDropdown");
+
+    if (!input.contains(e.target) && !dd.contains(e.target)) {
+        dd.style.display = "none";
+    }
+});
 </script>
 
 <?php include 'includes/footer.php'; ?>
