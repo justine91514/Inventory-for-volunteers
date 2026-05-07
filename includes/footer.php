@@ -133,6 +133,7 @@
 
 
 
+
 <script>
     //SCRIPT FOR EDIT MODAL IN STORAGE
     function openEdit(id, name, total) {

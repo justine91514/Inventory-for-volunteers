@@ -175,4 +175,29 @@ document.addEventListener("click", function(e){
     }
 });
 </script>
+
+<script>
+document.querySelector("input[name='name']").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+        e.preventDefault(); // stop form auto submit
+        openTimeInModal();
+    }
+});
+</script>
+
+<script>
+document.getElementById("timeOutInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+        e.preventDefault(); // stop form auto submit
+        openTimeOutModal();
+    }
+});
+</script>
+<script>
+    document.addEventListener("click", function (e) {
+    if (e.target !== input) {
+        input.focus();
+    }
+});
+</script>
 <?php include 'includes/footer.php'; ?>

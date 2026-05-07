@@ -85,5 +85,24 @@ if (isset($_POST['time_in'])) {
     </div>
 </div>
 
+<script>
+document.querySelector("input[name='name']").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+        e.preventDefault(); // stop form auto submit
+        openTimeInModal();
+    }
+});
+</script>
+
+<script>
+const input = document.querySelector("input[name='name']");
+
+document.addEventListener("click", function (e) {
+    if (!e.target.closest("input") && !e.target.closest(".dropdown-list")) {
+        input.focus();
+    }
+});
+</script>
+
 
 <?php include 'includes/footer.php'; ?>
