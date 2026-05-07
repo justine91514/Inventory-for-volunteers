@@ -1740,3 +1740,15 @@ table button:last-child:hover {
     font-size: 12px;
     border-radius: 8px;
 }
+
+.forgot-link {
+    display: block;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #ff4d4d;
+    text-decoration: none;
+}
+
+.forgot-link:hover {
+    text-decoration: underline;
+}
