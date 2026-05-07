@@ -98,6 +98,38 @@ $users = $conn->query("
 
 <!DOCTYPE html>
 <html>
+<div id="forgotModal" class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h3>Reset Password</h3>
+            <span onclick="closeForgotModal()">✖</span>
+        </div>
+
+        <div class="modal-body">
+
+            <input type="email" id="forgotEmail" placeholder="Enter Gmail address" autocomplete="off">
+
+            <input type="password" id="newPassword" placeholder="New Password">
+
+        </div>
+
+        <div class="modal-footer">
+
+            <button class="btn-confirm" onclick="resetPassword()">
+                Reset
+            </button>
+
+            <button class="btn-cancel" onclick="closeForgotModal()">
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 <head>
     <title>Login</title>
@@ -135,6 +167,12 @@ $users = $conn->query("
             <button type="submit" name="login">
                 Login
             </button>
+            <hr>
+            <div class="forgot-wrapper">
+                <button type="button" id="forgotBtn">
+                    Forgot Password?
+                </button>
+            </div>
 
         </form>
 
@@ -175,7 +213,7 @@ $users = $conn->query("
 
         const users = [
             <?php while ($row = $users->fetch_assoc()): ?>
-                                                                                                                        "<?= $row['username'] ?>",
+                                                                                                                                "<?= $row['username'] ?>",
             <?php endwhile; ?>
         ];
 
@@ -255,7 +293,62 @@ $users = $conn->query("
 
         });
     </script>
+<script>
 
+const forgotModal = document.getElementById("forgotModal");
+
+document.getElementById("forgotBtn")
+.addEventListener("click", function(){
+
+    forgotModal.style.display = "flex";
+
+});
+
+function closeForgotModal() {
+
+    forgotModal.style.display = "none";
+
+}
+
+function resetPassword() {
+
+    let email = document.getElementById("forgotEmail").value;
+    let password = document.getElementById("newPassword").value;
+
+    fetch("reset_password.php", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type":"application/x-www-form-urlencoded"
+        },
+
+        body:
+            "email=" + encodeURIComponent(email)
+            + "&password=" + encodeURIComponent(password)
+
+    })
+
+    .then(res => res.text())
+
+    .then(data => {
+
+        if (data === "success") {
+
+            alert("Password updated successfully");
+
+            closeForgotModal();
+
+        } else {
+
+            alert(data);
+
+        }
+
+    });
+
+}
+</script>
 </body>
 
 </html>

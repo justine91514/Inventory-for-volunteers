@@ -114,3 +114,97 @@ body {
     cursor: pointer;
     margin-left: 5px;
 }
+
+
+
+
+
+
+
+
+
+/*  FOR FORGOT PASSWORD
+
+/* FORGOT BUTTON */
+.forgot-wrapper {
+    text-align: right;
+    margin-top: 10px;
+}
+
+#forgotBtn {
+    background: none;
+    border: none;
+    color: #2c3e50;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-box {
+    width: 350px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    animation: pop .2s ease;
+}
+
+@keyframes pop {
+    from {
+        transform: scale(.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    background: #2c3e50;
+    color: white;
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-footer {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-confirm,
+.btn-cancel {
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+}
+
+.btn-confirm {
+    background: #27ae60;
+}
+
+.btn-cancel {
+    background: #e74c3c;
+}
