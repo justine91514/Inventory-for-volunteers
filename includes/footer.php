@@ -148,19 +148,12 @@
 </script>
 
 <script>
-    function openEdit(id, name, total) {
-        document.getElementById("editModal").style.display = "block";
-        document.getElementById("edit_id").value = id;
-        document.getElementById("edit_name").value = name;
-        document.getElementById("edit_total").value = total;
-    }
-
     function submitEdit() {
         let id = document.getElementById("edit_id").value;
         let name = document.getElementById("edit_name").value;
         let total = document.getElementById("edit_total").value;
 
-        fetch("update_item.php", {
+        fetch("update_inventory.php", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: "id=" + id + "&name=" + encodeURIComponent(name) + "&total=" + total
