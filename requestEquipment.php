@@ -208,113 +208,87 @@ if (isset($_POST['borrow'])) {
 
 
 <script>
-    //script for checkbox in requestEquipment
-    const nameInput = document.getElementById("borrowerName");
-    const checkboxes = document.querySelectorAll(".item-check");
+const input = document.getElementById("borrowerName");
+const dropdown = document.getElementById("borrowerDropdown");
+const checkboxes = document.querySelectorAll(".item-check");
 
-    nameInput.addEventListener("input", function () {
-
-        let enabled = this.value.trim().length > 0;
-
-        checkboxes.forEach(cb => {
-
-            // ❌ DO NOT ENABLE if out-of-stock
-            if (cb.closest("tr").classList.contains("out-of-stock")) {
-                cb.disabled = true;
-                return;
-            }
-
-            cb.disabled = !enabled;
-
-            if (!enabled) {
-                cb.checked = false;
-                toggleQty(cb, false);
-            }
-        });
-    });
-
+// 🔥 ALWAYS START DISABLED
+window.addEventListener("DOMContentLoaded", () => {
     checkboxes.forEach(cb => {
-        cb.addEventListener("change", function () {
-            toggleQty(this, this.checked);
-        });
+        cb.disabled = true;
+        let qty = cb.closest("tr").querySelector(".qty-input");
+        if (qty) qty.disabled = true;
     });
+});
 
-    function toggleQty(checkbox, isChecked) {
-        let row = checkbox.closest("tr");
-        let qty = row.querySelector(".qty-input");
+// ===== DROPDOWN =====
+function toggleBorrowerDropdown() {
+    dropdown.style.display = "block";
+}
 
-        qty.disabled = !isChecked;
+function selectBorrower(name) {
+    input.value = name;
+    dropdown.style.display = "none";
+    enableCheckboxes(true);
+}
 
-        if (!isChecked) {
-            qty.value = 1;
-        }
-    }
-</script>
+// ===== SEARCH FILTER =====
+function filterBorrowers() {
+    let val = input.value.toLowerCase();
+    let items = document.querySelectorAll("#borrowerDropdown .dropdown-item");
 
+    let hasMatch = false;
 
-<script>
-    //script for dropdaown in requestEquipment
-    function toggleBorrowerDropdown() {
-        let dd = document.getElementById("borrowerDropdown");
-        dd.style.display = dd.style.display === "block" ? "none" : "block";
-    }
+    items.forEach(item => {
+        let text = item.textContent.toLowerCase();
 
-    function selectBorrower(name) {
-        document.getElementById("borrowerName").value = name;
-        document.getElementById("borrowerDropdown").style.display = "none";
-    }
-
-    // close when clicking outside
-    document.addEventListener("click", function (e) {
-        let input = document.getElementById("borrowerName");
-        let dd = document.getElementById("borrowerDropdown");
-
-        if (!input.contains(e.target) && !dd.contains(e.target)) {
-            dd.style.display = "none";
+        if (text.includes(val)) {
+            item.style.display = "block";
+            hasMatch = true;
+        } else {
+            item.style.display = "none";
         }
     });
-</script>
 
-<script>
-    function toggleBorrowerDropdown() {
-        document.getElementById("borrowerDropdown").style.display = "block";
-    }
+    dropdown.style.display = hasMatch ? "block" : "none";
+}
 
-    function selectBorrower(name) {
-        document.getElementById("borrowerName").value = name;
-        document.getElementById("borrowerDropdown").style.display = "none";
-    }
+// ===== ENABLE / DISABLE CHECKBOXES =====
+function enableCheckboxes(state) {
+    checkboxes.forEach(cb => {
 
-    // 🔥 LIVE SEARCH FILTER
-    function filterBorrowers() {
-        let input = document.getElementById("borrowerName").value.toLowerCase();
-        let items = document.querySelectorAll("#borrowerDropdown .dropdown-item");
+        // skip out of stock
+        if (cb.closest("tr").classList.contains("out-of-stock")) return;
 
-        let hasMatch = false;
+        cb.disabled = !state;
 
-        items.forEach(item => {
-            let text = item.textContent.toLowerCase();
-
-            if (text.includes(input)) {
-                item.style.display = "block";
-                hasMatch = true;
-            } else {
-                item.style.display = "none";
+        if (!state) {
+            cb.checked = false;
+            let qty = cb.closest("tr").querySelector(".qty-input");
+            if (qty) {
+                qty.disabled = true;
+                qty.value = 1;
             }
-        });
-
-        document.getElementById("borrowerDropdown").style.display = hasMatch ? "block" : "none";
-    }
-
-    // close when clicking outside
-    document.addEventListener("click", function (e) {
-        let input = document.getElementById("borrowerName");
-        let dd = document.getElementById("borrowerDropdown");
-
-        if (!input.contains(e.target) && !dd.contains(e.target)) {
-            dd.style.display = "none";
         }
     });
+}
+
+// ===== CHECKBOX QTY TOGGLE =====
+checkboxes.forEach(cb => {
+    cb.addEventListener("change", function () {
+        let qty = this.closest("tr").querySelector(".qty-input");
+        qty.disabled = !this.checked;
+
+        if (!this.checked) qty.value = 1;
+    });
+});
+
+// ===== CLOSE DROPDOWN =====
+document.addEventListener("click", function (e) {
+    if (!e.target.closest(".dropdown-wrapper")) {
+        dropdown.style.display = "none";
+    }
+});
 </script>
 
 <?php include 'includes/footer.php'; ?>
