@@ -86,3 +86,31 @@ body {
     background: #2c3e50;
     color: #fff;
 }
+
+
+.success {
+    background: #eafaf1;
+    color: #27ae60;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.switch-form {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.switch-form span {
+    font-size: 13px;
+    color: #666;
+}
+
+.switch-form button {
+    background: none;
+    border: none;
+    color: #2c3e50;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 5px;
+}

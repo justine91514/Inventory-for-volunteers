@@ -1,113 +1,261 @@
 <?php
 session_start();
 include 'includes/db.php';
-$users = $conn->query("SELECT username FROM users ORDER BY username ASC");
-
 
 $error = "";
+$success = "";
 
+/* ================= LOGIN ================= */
 if (isset($_POST['login'])) {
-    $username = trim($_POST['username']);
+
+    $login = trim($_POST['username']);
     $password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
-    $stmt->bind_param("s", $username);
+    $stmt = $conn->prepare("
+        SELECT * FROM users 
+        WHERE username = ?
+        OR email = ?
+    ");
+
+    $stmt->bind_param("ss", $login, $login);
+
     $stmt->execute();
+
     $result = $stmt->get_result();
 
     if ($result->num_rows === 1) {
+
         $user = $result->fetch_assoc();
-        // return this if you returned the hasshing in user_mangement
-        //if (password_verify($password, $user['password']))
-            if ($password === $user['password']) {
+
+        if ($password === $user['password']) {
+
             $_SESSION['user'] = $user['username'];
+
             header("Location: dashboard.php");
             exit;
+
         } else {
             $error = "Wrong password";
         }
+
     } else {
         $error = "User not found";
     }
 }
+/* ================= SIGNUP ================= */
+/* ================= SIGNUP ================= */
+if (isset($_POST['signup'])) {
+
+    $email = trim($_POST['signup_email'] ?? '');
+    $username = trim($_POST['signup_username'] ?? '');
+    $password = $_POST['signup_password'] ?? '';
+
+    // gmail validation
+    if (!preg_match("/^[a-zA-Z0-9._%+-]+@gmail\.com$/", $email)) {
+
+        $error = "Email must be a Gmail address";
+
+    } else {
+
+        // check duplicate email
+        $checkEmail = $conn->query("
+            SELECT * FROM users 
+            WHERE email='$email'
+        ");
+
+        // check duplicate username
+        $checkUser = $conn->query("
+            SELECT * FROM users 
+            WHERE username='$username'
+        ");
+
+        if ($checkEmail->num_rows > 0) {
+
+            $error = "Email already exists";
+
+        } elseif ($checkUser->num_rows > 0) {
+
+            $error = "Username already taken";
+
+        } else {
+
+            $conn->query("
+                INSERT INTO users(email, username, password)
+                VALUES('$email','$username','$password')
+            ");
+
+            $success = "Account created successfully!";
+        }
+    }
+}
+
+/* ================= USERNAMES ================= */
+$users = $conn->query("
+    SELECT username FROM users
+    ORDER BY username ASC
+");
 ?>
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Login</title>
     <link rel="stylesheet" href="assets/css/login.css">
 </head>
+
 <body>
 
-<div class="login-box">
+    <div class="login-box">
 
-    <h2>Login</h2>
+        <h2 id="formTitle">Login</h2>
 
-    <?php if ($error): ?>
-        <p class="error"><?= $error ?></p>
-    <?php endif; ?>
+        <?php if ($error): ?>
+            <p class="error"><?= $error ?></p>
+        <?php endif; ?>
 
-    <form method="POST">
-        <div class="dropdown-wrapper">
+        <?php if ($success): ?>
+            <p class="success"><?= $success ?></p>
+        <?php endif; ?>
 
-    <input type="text" id="usernameInput" name="username"
-        placeholder="Select username..." autocomplete="off" required>
+        <!-- LOGIN FORM -->
+        <form method="POST" id="loginForm">
 
-    <div id="userDropdown" class="dropdown-list"></div>
+            <div class="dropdown-wrapper">
 
-</div>
-        <input type="password" name="password" placeholder="Password" required>
+                <input type="text" id="usernameInput" name="username" placeholder="Username or Gmail..."
+                    autocomplete="off" required>
 
-        <button type="submit" name="login">Login</button>
-    </form>
+                <div id="userDropdown" class="dropdown-list"></div>
 
-</div>
+            </div>
 
+            <input type="password" name="password" placeholder="Password" required>
 
-<script>
-const input = document.getElementById("usernameInput");
-const dropdown = document.getElementById("userDropdown");
+            <button type="submit" name="login">
+                Login
+            </button>
 
-const users = [
-<?php while ($row = $users->fetch_assoc()): ?>
-    "<?= $row['username'] ?>",
-<?php endwhile; ?>
-];
+        </form>
 
-// show list
-input.addEventListener("focus", showList);
-input.addEventListener("input", showList);
+        <!-- SIGNUP FORM -->
+        <form method="POST" id="signupForm" style="display:none;">
 
-function showList() {
-    let val = input.value.toLowerCase();
-    dropdown.innerHTML = "";
+            <input type="email" name="signup_email" placeholder="Gmail Address" autocomplete="off" required>
 
-    let filtered = users.filter(u =>
-        u.toLowerCase().includes(val)
-    );
+            <input type="text" name="signup_username" placeholder="Username" autocomplete="off" required>
 
-    filtered.forEach(user => {
-        let div = document.createElement("div");
-        div.textContent = user;
+            <input type="password" name="signup_password" placeholder="Password" required>
 
-        div.onclick = function () {
-            input.value = user;
-            dropdown.style.display = "none";
-        };
+            <button type="submit" name="signup">
+                Create Account
+            </button>
 
-        dropdown.appendChild(div);
-    });
+        </form>
 
-    dropdown.style.display = "block";
-}
+        <div class="switch-form">
 
-// close when clicking outside
-document.addEventListener("click", function(e){
-    if (!e.target.closest(".dropdown-wrapper")) {
-        dropdown.style.display = "none";
-    }
-});
-</script>
+            <span id="toggleText">
+                Don't have an account?
+            </span>
+
+            <button type="button" id="toggleBtn">
+                Sign Up
+            </button>
+
+        </div>
+
+    </div>
+
+    <script>
+        /* ========= LOGIN USER DROPDOWN ========= */
+
+        const input = document.getElementById("usernameInput");
+        const dropdown = document.getElementById("userDropdown");
+
+        const users = [
+            <?php while ($row = $users->fetch_assoc()): ?>
+                                                                                                                        "<?= $row['username'] ?>",
+            <?php endwhile; ?>
+        ];
+
+        input.addEventListener("focus", showList);
+        input.addEventListener("input", showList);
+
+        function showList() {
+
+            let val = input.value.toLowerCase();
+
+            dropdown.innerHTML = "";
+
+            let filtered = users.filter(u =>
+                u.toLowerCase().includes(val)
+            );
+
+            filtered.forEach(user => {
+
+                let div = document.createElement("div");
+
+                div.textContent = user;
+
+                div.onclick = function () {
+                    input.value = user;
+                    dropdown.style.display = "none";
+                };
+
+                dropdown.appendChild(div);
+            });
+
+            dropdown.style.display = "block";
+        }
+
+        document.addEventListener("click", function (e) {
+
+            if (!e.target.closest(".dropdown-wrapper")) {
+                dropdown.style.display = "none";
+            }
+
+        });
+
+        /* ========= TOGGLE LOGIN / SIGNUP ========= */
+
+        const loginForm = document.getElementById("loginForm");
+        const signupForm = document.getElementById("signupForm");
+
+        const toggleBtn = document.getElementById("toggleBtn");
+        const toggleText = document.getElementById("toggleText");
+        const formTitle = document.getElementById("formTitle");
+
+        let signupMode = false;
+
+        toggleBtn.addEventListener("click", function () {
+
+            signupMode = !signupMode;
+
+            if (signupMode) {
+
+                loginForm.style.display = "none";
+                signupForm.style.display = "block";
+
+                formTitle.innerText = "Create Account";
+
+                toggleText.innerText = "Already have an account?";
+                toggleBtn.innerText = "Login";
+
+            } else {
+
+                loginForm.style.display = "block";
+                signupForm.style.display = "none";
+
+                formTitle.innerText = "Login";
+
+                toggleText.innerText = "Don't have an account?";
+                toggleBtn.innerText = "Sign Up";
+            }
+
+        });
+    </script>
+
 </body>
+
 </html>
