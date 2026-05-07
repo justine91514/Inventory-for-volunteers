@@ -1353,3 +1353,42 @@ table button:last-child:hover {
     border-radius: 6px;
     cursor: pointer;
 }
+
+
+
+/* =============================================================== */
+
+
+/* MODAL FOR USER_MANAGEMENT.PHP */
+
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-edit,
+.btn-delete {
+    border: none;
+    padding: 7px 12px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn-edit {
+    background: #3498db;
+}
+
+.btn-delete {
+    background: #e74c3c;
+}
+
+.btn-edit:hover {
+    opacity: .9;
+}
+
+.btn-delete:hover {
+    opacity: .9;
+}
