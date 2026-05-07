@@ -41,119 +41,121 @@ $borrow = $conn->query("
 
     <!-- ===== ATTENDANCE ===== -->
     <div class="card">
-        <input type="text" class="table-search" placeholder="Search attendance..." data-table="attendanceTable">
-        <div class="table-header">
-            <h3>Attendance Logs</h3>
+        <div class="card">
+            <input type="text" class="table-search" placeholder="Search attendance..." data-table="attendanceTable">
+            <div class="table-header">
+                <h3>Attendance Logs</h3>
 
-            <div class="date-nav">
-                <a class="nav-btn" href="?date=<?= date('Y-m-d', strtotime($date . ' -1 day')) ?>">⬅</a>
+                <div class="date-nav">
+                    <a class="nav-btn" href="?date=<?= date('Y-m-d', strtotime($date . ' -1 day')) ?>">⬅</a>
 
-                <!-- CALENDAR BUTTON -->
-                <input type="date" id="calendarPicker" value="<?= $date ?>" style="display:none;">
-                <button type="button" class="date-btn" onclick="toggleCalendar()">
-                    <?= date("F d, Y", strtotime($date)) ?>
-                </button>
+                    <!-- CALENDAR BUTTON -->
+                    <input type="date" id="calendarPicker" value="<?= $date ?>" style="display:none;">
+                    <button type="button" class="date-btn" onclick="toggleCalendar()">
+                        <?= date("F d, Y", strtotime($date)) ?>
+                    </button>
 
-                <a class="nav-btn" href="?date=<?= date('Y-m-d', strtotime($date . ' +1 day')) ?>">➡</a>
-            </div>
-        </div>
-
-        <div id="calendarPopup" class="calendar-popup">
-            <div class="calendar-box">
-
-                <div class="calendar-header">
-                    <button onclick="changeMonth(-1)">‹</button>
-                    <span id="calMonth"></span>
-                    <button onclick="changeMonth(1)">›</button>
+                    <a class="nav-btn" href="?date=<?= date('Y-m-d', strtotime($date . ' +1 day')) ?>">➡</a>
                 </div>
-
-                <div class="calendar-grid" id="calendarGrid"></div>
-
             </div>
-        </div>
 
-        <div class="table-wrapper">
-            <table class="table" id="attendanceTable">
+            <div id="calendarPopup" class="calendar-popup">
+                <div class="calendar-box">
 
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Time In</th>
-                        <th>Time Out</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
+                    <div class="calendar-header">
+                        <button onclick="changeMonth(-1)">‹</button>
+                        <span id="calMonth"></span>
+                        <button onclick="changeMonth(1)">›</button>
+                    </div>
 
-                <tbody>
+                    <div class="calendar-grid" id="calendarGrid"></div>
 
-                    <?php if ($attendance && $attendance->num_rows > 0): ?>
+                </div>
+            </div>
 
-                        <?php
-                        // get alarm time once only
-                        $alarmQuery = $conn->query("
+            <div class="table-wrapper">
+                <table class="table" id="attendanceTable">
+
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Time In</th>
+                            <th>Time Out</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <?php if ($attendance && $attendance->num_rows > 0): ?>
+
+                            <?php
+                            // get alarm time once only
+                            $alarmQuery = $conn->query("
                     SELECT timeout_time 
                     FROM alarm_settings 
                     LIMIT 1
                 ");
 
-                        $alarmData = $alarmQuery->fetch_assoc();
-                        ?>
-
-                        <?php while ($row = $attendance->fetch_assoc()): ?>
-
-                            <?php
-                            $warningClass = "";
-
-                            // only active users
-                            if (empty($row['time_out']) && !empty($alarmData['timeout_time'])) {
-
-                                $now = strtotime(date("H:i:s"));
-                                $alarm = strtotime($alarmData['timeout_time']);
-
-                                // 30 mins before timeout
-                                $warning = strtotime("-30 minutes", $alarm);
-
-                                if ($now >= $alarm) {
-                                    $warningClass = "danger-row";
-                                } elseif ($now >= $warning) {
-                                    $warningClass = "warning-row";
-                                }
-                            }
+                            $alarmData = $alarmQuery->fetch_assoc();
                             ?>
 
-                            <tr class="<?= $warningClass ?>">
+                            <?php while ($row = $attendance->fetch_assoc()): ?>
 
-                                <td><?= $row['volunteer_name'] ?></td>
+                                <?php
+                                $warningClass = "";
 
-                                <td>
-                                    <?= date("h:i A", strtotime($row['time_in'])) ?>
+                                // only active users
+                                if (empty($row['time_out']) && !empty($alarmData['timeout_time'])) {
+
+                                    $now = strtotime(date("H:i:s"));
+                                    $alarm = strtotime($alarmData['timeout_time']);
+
+                                    // 30 mins before timeout
+                                    $warning = strtotime("-30 minutes", $alarm);
+
+                                    if ($now >= $alarm) {
+                                        $warningClass = "danger-row";
+                                    } elseif ($now >= $warning) {
+                                        $warningClass = "warning-row";
+                                    }
+                                }
+                                ?>
+
+                                <tr class="<?= $warningClass ?>">
+
+                                    <td><?= $row['volunteer_name'] ?></td>
+
+                                    <td>
+                                        <?= date("h:i A", strtotime($row['time_in'])) ?>
+                                    </td>
+
+                                    <td>
+                                        <?= $row['time_out']
+                                            ? '<span class="badge-timeout">' . date("h:i A", strtotime($row['time_out'])) . '</span>'
+                                            : '<span class="badge-active">Active</span>' ?>
+                                    </td>
+
+                                    <td><?= $row['attendance_date'] ?></td>
+
+                                </tr>
+
+                            <?php endwhile; ?>
+
+                        <?php else: ?>
+
+                            <tr>
+                                <td colspan="4" class="empty">
+                                    No records found
                                 </td>
-
-                                <td>
-                                    <?= $row['time_out']
-                                        ? '<span class="badge-timeout">' . date("h:i A", strtotime($row['time_out'])) . '</span>'
-                                        : '<span class="badge-active">Active</span>' ?>
-                                </td>
-
-                                <td><?= $row['attendance_date'] ?></td>
-
                             </tr>
 
-                        <?php endwhile; ?>
+                        <?php endif; ?>
 
-                    <?php else: ?>
+                    </tbody>
 
-                        <tr>
-                            <td colspan="4" class="empty">
-                                No records found
-                            </td>
-                        </tr>
-
-                    <?php endif; ?>
-
-                </tbody>
-
-            </table>
+                </table>
+            </div>
         </div>
 
         <!-- ===== INVENTORY ===== -->
@@ -224,4 +226,57 @@ $borrow = $conn->query("
                 </table>
             </div>
         </div>
+
+        <script>
+
+            const timeoutTime = "<?= $alarmData['timeout_time'] ?? '' ?>";
+
+            function updateWarningRows() {
+
+                if (!timeoutTime) return;
+
+                const rows = document.querySelectorAll("#attendanceTable tbody tr");
+
+                let now = new Date();
+
+                let [h, m, s] = timeoutTime.split(":");
+
+                let alarm = new Date();
+                alarm.setHours(h, m, s || 0);
+
+                let warning = new Date(alarm.getTime() - (30 * 60 * 1000));
+
+                rows.forEach(row => {
+
+                    const statusCell = row.children[2];
+
+                    if (!statusCell) return;
+
+                    const isActive = statusCell.innerText.includes("Active");
+
+                    // remove old classes first
+                    row.classList.remove("warning-row");
+                    row.classList.remove("danger-row");
+
+                    if (isActive) {
+
+                        if (now >= alarm) {
+
+                            row.classList.add("danger-row");
+
+                        } else if (now >= warning) {
+
+                            row.classList.add("warning-row");
+                        }
+                    }
+                });
+            }
+
+            // run immediately
+            updateWarningRows();
+
+            // auto update every second
+            setInterval(updateWarningRows, 1000);
+
+        </script>
         <?php include 'includes/footer.php'; ?>

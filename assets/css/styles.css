@@ -544,6 +544,40 @@ h1 {
     }
 }
 
+/* 30 mins before timeout */
+.warning-row {
+    animation: warningBlink 1s infinite;
+}
+
+@keyframes warningBlink {
+    0% {
+        background: rgba(255, 193, 7, 0.15);
+    }
+    50% {
+        background: rgba(255, 193, 7, 0.45);
+    }
+    100% {
+        background: rgba(255, 193, 7, 0.15);
+    }
+}
+
+/* already past timeout */
+.danger-row {
+    animation: dangerBlink 0.7s infinite;
+}
+
+@keyframes dangerBlink {
+    0% {
+        background: rgba(220, 53, 69, 0.15);
+    }
+    50% {
+        background: rgba(220, 53, 69, 0.5);
+    }
+    100% {
+        background: rgba(220, 53, 69, 0.15);
+    }
+}
+
 /* =============================================================== */
 
 /* ===== FORM PAGES (TIME IN / TIME OUT) ===== */
