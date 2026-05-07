@@ -61,8 +61,9 @@
             </a>
 
             <ul class="dropdown-menu" id="settingsDropdown">
-                <li><a href="rename.php">Rename</a></li>
                 <li><a href="user_management.php">User Management</a></li>
+                <li><a href="rename.php">Rename</a></li>
+                <li><a href="alarm.php">Alarm</a></li>
             </ul>
         </li>
 

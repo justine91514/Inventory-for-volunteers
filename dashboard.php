@@ -34,7 +34,6 @@ $borrow = $conn->query("
 ");
 ?>
 
-<link rel="stylesheet" href="assets/css/dashboard.css">
 
 <div class="main-content">
 
@@ -75,6 +74,7 @@ $borrow = $conn->query("
 
         <div class="table-wrapper">
             <table class="table" id="attendanceTable">
+
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -83,96 +83,145 @@ $borrow = $conn->query("
                         <th>Date</th>
                     </tr>
                 </thead>
+
                 <tbody>
+
                     <?php if ($attendance && $attendance->num_rows > 0): ?>
+
+                        <?php
+                        // get alarm time once only
+                        $alarmQuery = $conn->query("
+                    SELECT timeout_time 
+                    FROM alarm_settings 
+                    LIMIT 1
+                ");
+
+                        $alarmData = $alarmQuery->fetch_assoc();
+                        ?>
+
                         <?php while ($row = $attendance->fetch_assoc()): ?>
-                            <tr>
+
+                            <?php
+                            $warningClass = "";
+
+                            // only active users
+                            if (empty($row['time_out']) && !empty($alarmData['timeout_time'])) {
+
+                                $now = strtotime(date("H:i:s"));
+                                $alarm = strtotime($alarmData['timeout_time']);
+
+                                // 30 mins before timeout
+                                $warning = strtotime("-30 minutes", $alarm);
+
+                                if ($now >= $alarm) {
+                                    $warningClass = "danger-row";
+                                } elseif ($now >= $warning) {
+                                    $warningClass = "warning-row";
+                                }
+                            }
+                            ?>
+
+                            <tr class="<?= $warningClass ?>">
+
                                 <td><?= $row['volunteer_name'] ?></td>
-                                <td><?= date("h:i A", strtotime($row['time_in'])) ?></td>
+
+                                <td>
+                                    <?= date("h:i A", strtotime($row['time_in'])) ?>
+                                </td>
+
                                 <td>
                                     <?= $row['time_out']
                                         ? '<span class="badge-timeout">' . date("h:i A", strtotime($row['time_out'])) . '</span>'
                                         : '<span class="badge-active">Active</span>' ?>
                                 </td>
+
                                 <td><?= $row['attendance_date'] ?></td>
+
                             </tr>
+
                         <?php endwhile; ?>
+
                     <?php else: ?>
+
                         <tr>
-                            <td colspan="4" class="empty">No records found</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- ===== INVENTORY ===== -->
-    <div class="card">
-        <input type="text" class="table-search" placeholder="Search inventory..." data-table="inventoryTable">
-        <h3>Inventory Status</h3>
-
-        <div class="table-wrapper">
-            <table class="table" id="inventoryTable">
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Total</th>
-                        <th>Borrowed</th>
-                        <th>Available</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <?php while ($row = $inventory->fetch_assoc()): ?>
-                        <tr>
-                            <td><?= $row['item_name'] ?></td>
-                            <td><span class="badge badge-blue"><?= $row['total_qty'] ?></span></td>
-                            <td><span class="badge badge-red"><?= $row['borrowed_qty'] ?></span></td>
-                            <td>
-                                <span class="badge <?= $row['available_qty'] == 0 ? 'badge-red' : 'badge-green' ?>">
-                                    <?= $row['available_qty'] ?>
-                                </span>
+                            <td colspan="4" class="empty">
+                                No records found
                             </td>
                         </tr>
-                    <?php endwhile; ?>
+
+                    <?php endif; ?>
+
                 </tbody>
+
             </table>
         </div>
-    </div>
-    <!-- ===== BORROWED ITEMS ===== -->
-    <div class="card">
-        <input type="text" class="table-search" placeholder="Search borrowed items..." data-table="borrowTable">
-        <h3>Borrowed Items</h3>
 
-        <div class="table-wrapper">
-            <table class="table" id="borrowTable">
-                <thead>
-                    <tr>
-                        <th>Borrower</th>
-                        <th>Item</th>
-                        <th>Quantity</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
+        <!-- ===== INVENTORY ===== -->
+        <div class="card">
+            <input type="text" class="table-search" placeholder="Search inventory..." data-table="inventoryTable">
+            <h3>Inventory Status</h3>
 
-                <tbody>
-                    <?php if ($borrow && $borrow->num_rows > 0): ?>
-                        <?php while ($row = $borrow->fetch_assoc()): ?>
+            <div class="table-wrapper">
+                <table class="table" id="inventoryTable">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Total</th>
+                            <th>Borrowed</th>
+                            <th>Available</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <?php while ($row = $inventory->fetch_assoc()): ?>
                             <tr>
-                                <td><?= $row['borrower_name'] ?></td>
                                 <td><?= $row['item_name'] ?></td>
-                                <td><span class="badge badge-blue"><?= $row['quantity'] ?></span></td>
-                                <td><?= date("Y-m-d h:i A", strtotime($row['borrow_date'])) ?></td>
+                                <td><span class="badge badge-blue"><?= $row['total_qty'] ?></span></td>
+                                <td><span class="badge badge-red"><?= $row['borrowed_qty'] ?></span></td>
+                                <td>
+                                    <span class="badge <?= $row['available_qty'] == 0 ? 'badge-red' : 'badge-green' ?>">
+                                        <?= $row['available_qty'] ?>
+                                    </span>
+                                </td>
                             </tr>
                         <?php endwhile; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="4" class="empty">No borrowed items</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-    <?php include 'includes/footer.php'; ?>
+        <!-- ===== BORROWED ITEMS ===== -->
+        <div class="card">
+            <input type="text" class="table-search" placeholder="Search borrowed items..." data-table="borrowTable">
+            <h3>Borrowed Items</h3>
+
+            <div class="table-wrapper">
+                <table class="table" id="borrowTable">
+                    <thead>
+                        <tr>
+                            <th>Borrower</th>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <?php if ($borrow && $borrow->num_rows > 0): ?>
+                            <?php while ($row = $borrow->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?= $row['borrower_name'] ?></td>
+                                    <td><?= $row['item_name'] ?></td>
+                                    <td><span class="badge badge-blue"><?= $row['quantity'] ?></span></td>
+                                    <td><?= date("Y-m-d h:i A", strtotime($row['borrow_date'])) ?></td>
+                                </tr>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4" class="empty">No borrowed items</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <?php include 'includes/footer.php'; ?>

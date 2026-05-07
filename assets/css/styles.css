@@ -497,6 +497,53 @@ h1 {
 }
 
 
+/* ===== WARNING ROW ===== */
+.warning-row {
+    animation: warningBlink 1s infinite;
+}
+
+.warning-row td {
+    background: rgba(255, 193, 7, 0.18) !important;
+    color: #ff9800;
+    font-weight: 600;
+}
+
+/* ===== DANGER ROW ===== */
+.danger-row {
+    animation: dangerBlink 0.8s infinite;
+}
+
+.danger-row td {
+    background: rgba(255, 0, 0, 0.18) !important;
+    color: #ff3b3b;
+    font-weight: 700;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes warningBlink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.65;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes dangerBlink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.45;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 /* =============================================================== */
 
 /* ===== FORM PAGES (TIME IN / TIME OUT) ===== */
@@ -717,7 +764,7 @@ button[name="borrow"] {
 }
 
 button[name="borrow"]:hover {
-    background: #1a252f;
+    background: #2f1a1c;
 }
 
 .dropdown-wrapper {
@@ -733,7 +780,7 @@ button[name="borrow"]:hover {
     width: 100%;
     max-height: 200px;
     overflow-y: auto;
-    background: #fff;
+    background: #ffffff;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
@@ -749,6 +796,9 @@ button[name="borrow"]:hover {
     background: #2c3e50;
     color: #fff;
 }
+
+
+
 
 /* =============================================================== */
 
