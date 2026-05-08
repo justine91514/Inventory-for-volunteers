@@ -52,13 +52,8 @@ $reports = $conn->query("
 
                                 <td><?= $row['performed_by'] ?></td>
 
-                                <?php
-                                preg_match('/borrowed by (.*?) -/', $row['description'], $matches);
-                                $borrowerName = $matches[1] ?? 'Unknown';
-                                ?>
-
                                 <td>
-                                    <?= $borrowerName ?> Borrowed Items
+                                   <?= $row['performed_by'] ?> Borrowed Items
                                 </td>
 
                                 <td>

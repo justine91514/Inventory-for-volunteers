@@ -12,44 +12,13 @@
 session_start();
 include 'db.php';
 
-function addLog($conn, $type, $desc, $transactionId = null)
-{
-    $type = $conn->real_escape_string($type);
-    $desc = $conn->real_escape_string($desc);
 
-    $performedBy = isset($_SESSION['username'])
-    ? $_SESSION['username']
-    : 'System';
-    $performedBy = $conn->real_escape_string($performedBy);
-
-    $transactionId = $transactionId
-        ? "'" . $conn->real_escape_string($transactionId) . "'"
-        : "NULL";
-
-    $conn->query("
-        INSERT INTO reports 
-        (action_type, description, performed_by, transaction_id)
-        VALUES (
-            '$type',
-            '$desc',
-            '$performedBy',
-            $transactionId
-        )
-    ");
-}
 ?>
 
 <?php
 
 
 
-
-// //RETURN
-// addLog(
-//     $conn,
-//     "Return",
-//     "$name returned $qty x $item"
-// );
 
 // //INVENTORY ADD
 // addLog(
