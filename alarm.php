@@ -2,6 +2,7 @@
 include 'includes/header.php';
 include 'includes/sidebar.php';
 include 'includes/db.php';
+include 'log_helper.php';
 
 $message = "";
 
@@ -27,6 +28,15 @@ if (isset($_POST['save_alarm'])) {
             VALUES('$time')
         ");
     }
+
+    // ===== LOG =====
+    $admin = $_SESSION['username'] ?? 'System';
+
+    addLog(
+        $conn,
+        "Alarm Updated",
+        "$admin changed timeout alarm to " . date("h:i A", strtotime($time))
+    );
 
     $message = "Alarm time updated!";
 }
@@ -54,12 +64,7 @@ $currentTime = $row['timeout_time'] ?? "18:00";
 
             <label>Time Out Reminder</label>
 
-            <input 
-                type="time"
-                name="timeout_time"
-                value="<?= date('H:i', strtotime($currentTime)) ?>"
-                required
-            >
+            <input type="time" name="timeout_time" value="<?= date('H:i', strtotime($currentTime)) ?>" required>
 
             <button type="submit" name="save_alarm" class="btn-primary">
                 Save Timer
