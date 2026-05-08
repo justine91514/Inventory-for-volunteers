@@ -1,18 +1,38 @@
 <?php
 include 'includes/db.php';
+include 'log_helper.php';
+session_start();
 
 $id = $_GET['id'];
 
-$item = $conn->query("SELECT * FROM inventory WHERE id = $id")->fetch_assoc();
+// GET ITEM DATA FIRST
+$get = $conn->query("
+    SELECT item_name, total_qty 
+    FROM inventory 
+    WHERE id = '$id'
+");
 
-$borrowed = $item['total_qty'] - $item['available_qty'];
+$row = $get->fetch_assoc();
 
-if ($borrowed > 0) {
-    echo "Cannot delete. Item is currently borrowed.";
-    exit;
+$item = $row['item_name'] ?? 'Unknown Item';
+$qty = $row['total_qty'] ?? 0;
+
+// DELETE QUERY
+$sql = "DELETE FROM inventory WHERE id='$id'";
+
+if ($conn->query($sql)) {
+
+    addLog(
+        $conn,
+        "Delete",
+        "Deleted $qty x $item"
+    );
+
+    echo "success";
+
+} else {
+
+    echo "error";
+
 }
-
-$conn->query("DELETE FROM inventory WHERE id = $id");
-
-echo "success";
 ?>

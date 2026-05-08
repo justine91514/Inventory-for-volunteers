@@ -19,15 +19,6 @@ include 'db.php';
 
 
 
-
-// //INVENTORY ADD
-// addLog(
-//     $conn,
-//     "Inventory Added",
-//     "Added $qty x $item"
-// );
-
-
 // //DELETE ITEM
 // addLog(
 //     $conn,
