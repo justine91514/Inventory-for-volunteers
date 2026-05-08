@@ -2,11 +2,13 @@
 include 'includes/header.php';
 include 'includes/sidebar.php';
 include 'includes/db.php';
+include 'log_helper.php';
 date_default_timezone_set('Asia/Manila');
 ?>
 
 <?php
 $itemList = $conn->query("SELECT DISTINCT item_name FROM inventory");
+$user = $_SESSION['username'];
 if (isset($_POST['add_item'])) {
     $item = $_POST['item'];
     $qty = $_POST['qty'];
@@ -23,7 +25,15 @@ if (isset($_POST['add_item'])) {
                 WHERE item_name = '$item'";
 
         if ($conn->query($sql)) {
+
+            addLog(
+                $conn,
+                "Inventory Updated",
+                "$user added $qty stock to $item"
+            );
+
             $success = "Stock updated! Added $qty to $item.";
+
         } else {
             $error = "Error: " . $conn->error;
         }
@@ -35,7 +45,15 @@ if (isset($_POST['add_item'])) {
             VALUES ('$item', '$qty', '$qty')";
 
         if ($conn->query($sql)) {
+
+            addLog(
+                $conn,
+                "Inventory Added",
+                "$user added $qty x $item"
+            );
+
             $success = "Item added!";
+
         } else {
             $error = "Error: " . $conn->error;
         }
@@ -130,60 +148,60 @@ $items = $conn->query("SELECT * FROM inventory");
 </div>
 
 <script>
-const itemInput = document.getElementById("itemInput");
-const dropdown = document.getElementById("itemDropdown");
+    const itemInput = document.getElementById("itemInput");
+    const dropdown = document.getElementById("itemDropdown");
 
-const items = [
-<?php while ($row = $itemList->fetch_assoc()): ?>
-    "<?= $row['item_name'] ?>",
-<?php endwhile; ?>
-];
+    const items = [
+        <?php while ($row = $itemList->fetch_assoc()): ?>
+                    "<?= $row['item_name'] ?>",
+        <?php endwhile; ?>
+    ];
 
-itemInput.addEventListener("focus", showItems);
-itemInput.addEventListener("input", showItems);
+    itemInput.addEventListener("focus", showItems);
+    itemInput.addEventListener("input", showItems);
 
-function showItems() {
-    let val = itemInput.value.toLowerCase().trim();
-    dropdown.innerHTML = "";
+    function showItems() {
+        let val = itemInput.value.toLowerCase().trim();
+        dropdown.innerHTML = "";
 
-    let filtered = items.filter(i => i.toLowerCase().includes(val));
+        let filtered = items.filter(i => i.toLowerCase().includes(val));
 
-    // 👉 show existing items
-    filtered.forEach(item => {
-        let div = document.createElement("div");
-        div.classList.add("dropdown-item");
-        div.textContent = item;
+        // 👉 show existing items
+        filtered.forEach(item => {
+            let div = document.createElement("div");
+            div.classList.add("dropdown-item");
+            div.textContent = item;
 
-        div.onclick = function () {
-            itemInput.value = item;
+            div.onclick = function () {
+                itemInput.value = item;
+                dropdown.style.display = "none";
+            };
+
+            dropdown.appendChild(div);
+        });
+
+        // 👉 show "Add new item" if not exact match
+        if (val && !items.some(i => i.toLowerCase() === val)) {
+            let addBtn = document.createElement("div");
+            addBtn.classList.add("dropdown-add");
+            addBtn.textContent = `+ Add "${itemInput.value}"`;
+
+            addBtn.onclick = function () {
+                // just keep value (your PHP will handle insert/update)
+                dropdown.style.display = "none";
+            };
+
+            dropdown.appendChild(addBtn);
+        }
+
+        dropdown.style.display = "block";
+    }
+
+    // close outside
+    document.addEventListener("click", function (e) {
+        if (!e.target.closest(".dropdown-wrapper")) {
             dropdown.style.display = "none";
-        };
-
-        dropdown.appendChild(div);
+        }
     });
-
-    // 👉 show "Add new item" if not exact match
-    if (val && !items.some(i => i.toLowerCase() === val)) {
-        let addBtn = document.createElement("div");
-        addBtn.classList.add("dropdown-add");
-        addBtn.textContent = `+ Add "${itemInput.value}"`;
-
-        addBtn.onclick = function () {
-            // just keep value (your PHP will handle insert/update)
-            dropdown.style.display = "none";
-        };
-
-        dropdown.appendChild(addBtn);
-    }
-
-    dropdown.style.display = "block";
-}
-
-// close outside
-document.addEventListener("click", function(e){
-    if (!e.target.closest(".dropdown-wrapper")) {
-        dropdown.style.display = "none";
-    }
-});
 </script>
 <?php include 'includes/footer.php'; ?>
