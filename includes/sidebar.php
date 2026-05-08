@@ -3,9 +3,7 @@
 
     <div class="sidebar-header">
         <h2>Inventory</h2>
-        <button id="toggleBtn">
-            <button id="toggleBtn">☰</button>
-        </button>
+        <button id="toggleBtn">☰</button>
     </div>
 
     <ul class="menu">
@@ -75,7 +73,7 @@
             </a>
         </li>
     </ul>
-    
+
     <script>
         function toggleSettings() {
             const dropdown = document.getElementById("settingsDropdown");
@@ -88,5 +86,5 @@
             }
         }
     </script>
-    
+
 </div>

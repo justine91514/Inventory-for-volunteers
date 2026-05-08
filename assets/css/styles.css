@@ -9,22 +9,44 @@ body {
 
 .sidebar h2 {
     text-align: center;
-    font-size: 18px;
-    margin-bottom: 20px;
+    font-size: 17px;
+    margin-top: 20px;
+    margin-bottom: -10px; /* smaller */
+    margin-left: 80px;
     color: #ffffff;
 }
 
 .sidebar {
     position: fixed;
-    width: 240px;
+    width: 230px;
     height: 100vh;
     background: #2c3e50;
     color: #fff;
-    padding: 20px 10px;
+
+    padding: 12px 8px; /* smaller */
     transition: all 0.3s ease;
     overflow: hidden;
+
     display: flex;
     flex-direction: column;
+}
+
+#toggleBtn {
+    background: transparent;
+    border: none;
+    color: white;
+
+    font-size: 18px;
+    cursor: pointer;
+
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
 }
 
 /* MENU */
@@ -34,22 +56,34 @@ body {
 }
 
 .sidebar ul li {
-    margin: 10px 0;
+    margin: 3px 0; /* smaller spacing */
 }
 
 .sidebar ul li a {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+
     color: #ecf0f1;
     text-decoration: none;
-    padding: 10px 15px;
+
+    padding: 9px 12px; /* smaller */
     border-radius: 6px;
+
     transition: 0.2s;
 }
 
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 4px;
+    margin-bottom: 12px;
+}
+
 .sidebar ul li a:hover {
-    background: #34495e;
+    background: #0a77e4;
 }
 
 /* ICON (fixed position) */
@@ -118,12 +152,13 @@ body {
 /* dropdown */
 .dropdown-menu {
     display: none;
-    padding-left: 30px;
+    padding-left: 20px;
+    margin-top: 2px;
 }
 
 .dropdown-menu li a {
     font-size: 13px;
-    padding: 8px 10px;
+    padding: 6px 10px;
 }
 
 /* arrow rotate */
