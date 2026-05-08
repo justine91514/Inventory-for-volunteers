@@ -726,6 +726,27 @@ h1 {
 }
 
 
+.welcome-card{
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: white;
+    padding: 22px;
+    border-radius: 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.welcome-card h2{
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.welcome-card p{
+    margin-top: 8px;
+    opacity: 0.9;
+    font-size: 14px;
+}
+
 /* =============================================================== */
 
 /* ===== REQUEST EQUIPMENT PAGE ===== */

@@ -21,21 +21,6 @@ include 'db.php';
 
 
 
-// //USERNAME CHANGE
-// addLog(
-//     $conn,
-//     "User Updated",
-//     "Username changed to $username"
-// );
-
-// //USER CHANGE PASSWORD
-// addLog(
-//     $conn,
-//     "Password",
-//     "Password changed successfully"
-// );
-
-
 
 
 

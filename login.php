@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'includes/db.php';
+include 'log_helper.php';
 
 $error = "";
 $success = "";
@@ -31,8 +32,15 @@ if (isset($_POST['login'])) {
 
             $_SESSION['username'] = $user['username'];
 
+            addLog(
+                $conn,
+                "Login",
+                $user['username'] . " logged in"
+            );
+
             header("Location: dashboard.php");
             exit;
+
 
         } else {
             $error = "Wrong password";
@@ -213,7 +221,7 @@ $users = $conn->query("
 
         const users = [
             <?php while ($row = $users->fetch_assoc()): ?>
-                                                                                                                                "<?= $row['username'] ?>",
+                                                                                                                                            "<?= $row['username'] ?>",
             <?php endwhile; ?>
         ];
 
@@ -293,62 +301,62 @@ $users = $conn->query("
 
         });
     </script>
-<script>
+    <script>
 
-const forgotModal = document.getElementById("forgotModal");
+        const forgotModal = document.getElementById("forgotModal");
 
-document.getElementById("forgotBtn")
-.addEventListener("click", function(){
+        document.getElementById("forgotBtn")
+            .addEventListener("click", function () {
 
-    forgotModal.style.display = "flex";
+                forgotModal.style.display = "flex";
 
-});
+            });
 
-function closeForgotModal() {
+        function closeForgotModal() {
 
-    forgotModal.style.display = "none";
-
-}
-
-function resetPassword() {
-
-    let email = document.getElementById("forgotEmail").value;
-    let password = document.getElementById("newPassword").value;
-
-    fetch("reset_password_in_login.php", {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type":"application/x-www-form-urlencoded"
-        },
-
-        body:
-            "email=" + encodeURIComponent(email)
-            + "&password=" + encodeURIComponent(password)
-
-    })
-
-    .then(res => res.text())
-
-    .then(data => {
-
-        if (data === "success") {
-
-            alert("Password updated successfully");
-
-            closeForgotModal();
-
-        } else {
-
-            alert(data);
+            forgotModal.style.display = "none";
 
         }
 
-    });
+        function resetPassword() {
 
-}
-</script>
+            let email = document.getElementById("forgotEmail").value;
+            let password = document.getElementById("newPassword").value;
+
+            fetch("reset_password_in_login.php", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+
+                body:
+                    "email=" + encodeURIComponent(email)
+                    + "&password=" + encodeURIComponent(password)
+
+            })
+
+                .then(res => res.text())
+
+                .then(data => {
+
+                    if (data === "success") {
+
+                        alert("Password updated successfully");
+
+                        closeForgotModal();
+
+                    } else {
+
+                        alert(data);
+
+                    }
+
+                });
+
+        }
+    </script>
 </body>
 
 </html>

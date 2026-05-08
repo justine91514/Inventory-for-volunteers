@@ -84,7 +84,11 @@ $borrow = $conn->query("
 
 <div class="main-content">
 
-    <h1>Dashboard</h1>
+
+    <h1>
+        Hi <?= $_SESSION['username'] ?? 'User' ?>,
+        Welcome to the Volunteers Dashboard
+    </h1>
 
     <!-- ===== ATTENDANCE ===== -->
     <div class="card">
