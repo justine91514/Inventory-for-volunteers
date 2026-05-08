@@ -129,9 +129,9 @@ $users = $conn->query("SELECT * FROM users ORDER BY id DESC");
                 <label>Current Password</label>
                 <input type="password" id="current_password" placeholder="Enter current password">
 
-                <a href="forgot_password.php" class="forgot-link">
+                <!-- <a href="forgot_password.php" class="forgot-link">
                     Forgot Password?
-                </a>
+                </a> -->
 
                 <button class="btn-confirm" onclick="verifyCurrentPassword()">
                     Continue

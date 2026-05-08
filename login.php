@@ -315,7 +315,7 @@ function resetPassword() {
     let email = document.getElementById("forgotEmail").value;
     let password = document.getElementById("newPassword").value;
 
-    fetch("reset_password.php", {
+    fetch("reset_password_in_login.php", {
 
         method: "POST",
 
