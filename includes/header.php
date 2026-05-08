@@ -11,19 +11,27 @@
 <?php
 include 'db.php';
 
-function addLog($conn, $type, $desc)
+function addLog($conn, $type, $desc, $transactionId = null)
 {
     $type = $conn->real_escape_string($type);
     $desc = $conn->real_escape_string($desc);
 
     $performedBy = $_SESSION['username'] ?? 'System';
-
     $performedBy = $conn->real_escape_string($performedBy);
+
+    $transactionId = $transactionId
+        ? "'" . $conn->real_escape_string($transactionId) . "'"
+        : "NULL";
 
     $conn->query("
         INSERT INTO reports 
-        (action_type, description, performed_by)
-        VALUES ('$type', '$desc', '$performedBy')
+        (action_type, description, performed_by, transaction_id)
+        VALUES (
+            '$type',
+            '$desc',
+            '$performedBy',
+            $transactionId
+        )
     ");
 }
 ?>
@@ -31,6 +39,50 @@ function addLog($conn, $type, $desc)
 <?php
 
 
+
+
+// //RETURN
+// addLog(
+//     $conn,
+//     "Return",
+//     "$name returned $qty x $item"
+// );
+
+// //INVENTORY ADD
+// addLog(
+//     $conn,
+//     "Inventory Added",
+//     "Added $qty x $item"
+// );
+
+
+// //DELETE ITEM
+// addLog(
+//     $conn,
+//     "Delete",
+//     "Deleted inventory item $item"
+// );
+
+// //INVENTORY EDIT
+// addLog(
+//     $conn,
+//     "Inventory Updated",
+//     "Updated item $oldName to $newName"
+// );
+
+// //USERNAME CHANGE
+// addLog(
+//     $conn,
+//     "User Updated",
+//     "Username changed to $username"
+// );
+
+// //USER CHANGE PASSWORD
+// addLog(
+//     $conn,
+//     "Password",
+//     "Password changed successfully"
+// );
 
 
 

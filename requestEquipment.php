@@ -50,7 +50,7 @@ if (isset($_POST['borrow'])) {
         if (empty($selected)) {
             $error = "No items selected.";
         } else {
-
+            $transactionId = uniqid("BRW-");
             foreach ($selected as $item) {
 
                 $qty = (int) ($qtys[$item] ?? 0);
@@ -89,21 +89,29 @@ if (isset($_POST['borrow'])) {
                 if ($existing->num_rows > 0) {
 
                     $conn->query("
-                        UPDATE borrow_records
-                        SET quantity = quantity + $qty
-                        WHERE borrower_name = '$name'
-                        AND item_name = '$item'
-                        AND status = 'borrowed'
-                    ");
+        UPDATE borrow_records
+        SET quantity = quantity + $qty
+        WHERE borrower_name = '$name'
+        AND item_name = '$item'
+        AND status = 'borrowed'
+    ");
 
                 } else {
 
                     $conn->query("
-                        INSERT INTO borrow_records 
-                        (borrower_name, item_name, quantity, borrow_date, status)
-                        VALUES ('$name', '$item', $qty, NOW(), 'borrowed')
-                    ");
+        INSERT INTO borrow_records 
+        (borrower_name, item_name, quantity, borrow_date, status)
+        VALUES ('$name', '$item', $qty, NOW(), 'borrowed')
+    ");
                 }
+
+                /* ===== LOG ===== */
+                addLog(
+                    $conn,
+                    "Borrow",
+                    "$qty x $item",
+                    $transactionId
+                );
             }
 
             if (!$error) {
@@ -208,87 +216,87 @@ if (isset($_POST['borrow'])) {
 
 
 <script>
-const input = document.getElementById("borrowerName");
-const dropdown = document.getElementById("borrowerDropdown");
-const checkboxes = document.querySelectorAll(".item-check");
+    const input = document.getElementById("borrowerName");
+    const dropdown = document.getElementById("borrowerDropdown");
+    const checkboxes = document.querySelectorAll(".item-check");
 
-// 🔥 ALWAYS START DISABLED
-window.addEventListener("DOMContentLoaded", () => {
-    checkboxes.forEach(cb => {
-        cb.disabled = true;
-        let qty = cb.closest("tr").querySelector(".qty-input");
-        if (qty) qty.disabled = true;
-    });
-});
-
-// ===== DROPDOWN =====
-function toggleBorrowerDropdown() {
-    dropdown.style.display = "block";
-}
-
-function selectBorrower(name) {
-    input.value = name;
-    dropdown.style.display = "none";
-    enableCheckboxes(true);
-}
-
-// ===== SEARCH FILTER =====
-function filterBorrowers() {
-    let val = input.value.toLowerCase();
-    let items = document.querySelectorAll("#borrowerDropdown .dropdown-item");
-
-    let hasMatch = false;
-
-    items.forEach(item => {
-        let text = item.textContent.toLowerCase();
-
-        if (text.includes(val)) {
-            item.style.display = "block";
-            hasMatch = true;
-        } else {
-            item.style.display = "none";
-        }
-    });
-
-    dropdown.style.display = hasMatch ? "block" : "none";
-}
-
-// ===== ENABLE / DISABLE CHECKBOXES =====
-function enableCheckboxes(state) {
-    checkboxes.forEach(cb => {
-
-        // skip out of stock
-        if (cb.closest("tr").classList.contains("out-of-stock")) return;
-
-        cb.disabled = !state;
-
-        if (!state) {
-            cb.checked = false;
+    // 🔥 ALWAYS START DISABLED
+    window.addEventListener("DOMContentLoaded", () => {
+        checkboxes.forEach(cb => {
+            cb.disabled = true;
             let qty = cb.closest("tr").querySelector(".qty-input");
-            if (qty) {
-                qty.disabled = true;
-                qty.value = 1;
+            if (qty) qty.disabled = true;
+        });
+    });
+
+    // ===== DROPDOWN =====
+    function toggleBorrowerDropdown() {
+        dropdown.style.display = "block";
+    }
+
+    function selectBorrower(name) {
+        input.value = name;
+        dropdown.style.display = "none";
+        enableCheckboxes(true);
+    }
+
+    // ===== SEARCH FILTER =====
+    function filterBorrowers() {
+        let val = input.value.toLowerCase();
+        let items = document.querySelectorAll("#borrowerDropdown .dropdown-item");
+
+        let hasMatch = false;
+
+        items.forEach(item => {
+            let text = item.textContent.toLowerCase();
+
+            if (text.includes(val)) {
+                item.style.display = "block";
+                hasMatch = true;
+            } else {
+                item.style.display = "none";
             }
+        });
+
+        dropdown.style.display = hasMatch ? "block" : "none";
+    }
+
+    // ===== ENABLE / DISABLE CHECKBOXES =====
+    function enableCheckboxes(state) {
+        checkboxes.forEach(cb => {
+
+            // skip out of stock
+            if (cb.closest("tr").classList.contains("out-of-stock")) return;
+
+            cb.disabled = !state;
+
+            if (!state) {
+                cb.checked = false;
+                let qty = cb.closest("tr").querySelector(".qty-input");
+                if (qty) {
+                    qty.disabled = true;
+                    qty.value = 1;
+                }
+            }
+        });
+    }
+
+    // ===== CHECKBOX QTY TOGGLE =====
+    checkboxes.forEach(cb => {
+        cb.addEventListener("change", function () {
+            let qty = this.closest("tr").querySelector(".qty-input");
+            qty.disabled = !this.checked;
+
+            if (!this.checked) qty.value = 1;
+        });
+    });
+
+    // ===== CLOSE DROPDOWN =====
+    document.addEventListener("click", function (e) {
+        if (!e.target.closest(".dropdown-wrapper")) {
+            dropdown.style.display = "none";
         }
     });
-}
-
-// ===== CHECKBOX QTY TOGGLE =====
-checkboxes.forEach(cb => {
-    cb.addEventListener("change", function () {
-        let qty = this.closest("tr").querySelector(".qty-input");
-        qty.disabled = !this.checked;
-
-        if (!this.checked) qty.value = 1;
-    });
-});
-
-// ===== CLOSE DROPDOWN =====
-document.addEventListener("click", function (e) {
-    if (!e.target.closest(".dropdown-wrapper")) {
-        dropdown.style.display = "none";
-    }
-});
 </script>
 
 <?php include 'includes/footer.php'; ?>
