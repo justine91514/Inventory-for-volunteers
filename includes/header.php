@@ -19,12 +19,6 @@ include 'db.php';
 
 
 
-// //DELETE ITEM
-// addLog(
-//     $conn,
-//     "Delete",
-//     "Deleted inventory item $item"
-// );
 
 // //INVENTORY EDIT
 // addLog(

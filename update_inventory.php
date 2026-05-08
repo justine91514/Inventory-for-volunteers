@@ -1,37 +1,62 @@
 <?php
 include 'includes/db.php';
+include 'log_helper.php';
+session_start();
 
 $id = $_POST['id'];
-$newName = $_POST['name'];
-$total = $_POST['total'];
+$new_name = $_POST['name'];
+$new_total = max(0, (int) $_POST['total']);
 
-// get old data
-$item = $conn->query("SELECT * FROM inventory WHERE id = $id")->fetch_assoc();
+// get old item
+$item = $conn->query("
+    SELECT * 
+    FROM inventory 
+    WHERE id = $id
+")->fetch_assoc();
 
-$oldName = $item['item_name'];
+$old_name = $item['item_name'];
+$old_total = $item['total_qty'];
+
 $borrowed = $item['total_qty'] - $item['available_qty'];
 
-// safety check
-if ($total < $borrowed) {
-    exit("Cannot set below borrowed items ($borrowed)");
+// ❌ safety check
+if ($new_total < $borrowed) {
+    echo "Cannot reduce below borrowed items ($borrowed)";
+    exit;
 }
 
-$newAvailable = $total - $borrowed;
+$new_available = $new_total - $borrowed;
 
-// 1. update inventory
-$conn->query("
-    UPDATE inventory SET
-    item_name = '$newName',
-    total_qty = $total,
-    available_qty = $newAvailable
+// ===== UPDATE INVENTORY =====
+$sql = "
+    UPDATE inventory SET 
+    item_name = '$new_name',
+    total_qty = $new_total,
+    available_qty = $new_available
     WHERE id = $id
-");
+";
 
-// 2. sync borrowed records (IMPORTANT)
-$conn->query("
-    UPDATE borrow_records 
-    SET item_name = '$newName'
-    WHERE item_name = '$oldName'
-");
+if ($conn->query($sql)) {
 
-echo "success";
+    // ===== UPDATE BORROW RECORDS =====
+    $conn->query("
+        UPDATE borrow_records 
+        SET item_name = '$new_name'
+        WHERE item_name = '$old_name'
+    ");
+
+    // ===== LOG =====
+    addLog(
+        $conn,
+        "Inventory Updated",
+        "Updated item $old_name ($old_total) to $new_name ($new_total)"
+    );
+
+    echo "success";
+
+} else {
+
+    echo "error";
+
+}
+?>
