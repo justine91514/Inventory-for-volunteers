@@ -5,24 +5,71 @@ include 'includes/db.php';
 
 date_default_timezone_set('Asia/Manila');
 
-/* ===== QUERIES ===== */
+/* ===== DATE ===== */
 
 $date = $_GET['date'] ?? date("Y-m-d");
 
-$attendance = $conn->query("
-    SELECT * FROM attendance 
-    WHERE attendance_date = '$date'
-    ORDER BY id DESC
+/* ===== GET ALARM TIME ===== */
+
+$alarmQuery = $conn->query("
+    SELECT timeout_time 
+    FROM alarm_settings 
+    LIMIT 1
 ");
 
-// Inventory
+$alarmData = $alarmQuery->fetch_assoc();
+
+/* default 6PM kapag walang setting */
+$timeoutTime = $alarmData['timeout_time'] ?? '18:00:00';
+
+/* current time */
+$now = date("H:i:s");
+
+/* 30 mins before timeout */
+$warningTime = date(
+    "H:i:s",
+    strtotime($timeoutTime . " -30 minutes")
+);
+
+/* ===== ATTENDANCE QUERY ===== */
+
+$attendance = $conn->query("
+    SELECT *,
+
+    CASE
+
+        /* 🔴 overdue */
+        WHEN time_out IS NULL 
+        AND '$now' >= '$timeoutTime'
+        THEN 0
+
+        /* 🟠 warning */
+        WHEN time_out IS NULL 
+        AND '$now' >= '$warningTime'
+        THEN 1
+
+        /* normal */
+        ELSE 2
+
+    END AS priority_sort
+
+    FROM attendance
+
+    WHERE attendance_date = '$date'
+
+    ORDER BY priority_sort ASC, id DESC
+");
+
+/* ===== INVENTORY ===== */
+
 $inventory = $conn->query("
     SELECT *,
     (total_qty - available_qty) AS borrowed_qty
     FROM inventory
 ");
 
-// Borrowed Items (grouped)
+/* ===== BORROWED ITEMS ===== */
+
 $borrow = $conn->query("
     SELECT borrower_name, item_name,
            SUM(quantity) AS quantity,
@@ -89,16 +136,6 @@ $borrow = $conn->query("
 
                         <?php if ($attendance && $attendance->num_rows > 0): ?>
 
-                            <?php
-                            // get alarm time once only
-                            $alarmQuery = $conn->query("
-                    SELECT timeout_time 
-                    FROM alarm_settings 
-                    LIMIT 1
-                ");
-
-                            $alarmData = $alarmQuery->fetch_assoc();
-                            ?>
 
                             <?php while ($row = $attendance->fetch_assoc()): ?>
 
