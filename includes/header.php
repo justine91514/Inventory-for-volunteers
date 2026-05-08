@@ -20,12 +20,6 @@ include 'db.php';
 
 
 
-// //INVENTORY EDIT
-// addLog(
-//     $conn,
-//     "Inventory Updated",
-//     "Updated item $oldName to $newName"
-// );
 
 // //USERNAME CHANGE
 // addLog(

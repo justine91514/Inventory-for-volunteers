@@ -1,23 +1,34 @@
 <?php
 include 'includes/db.php';
-date_default_timezone_set('Asia/Manila');
+include 'log_helper.php';
+session_start();
 
-$id = $_POST['id'] ?? '';
-$username = trim($_POST['username'] ?? '');
+$id = $_POST['id'];
+$username = trim($_POST['username']);
 
-if (!$id || !$username) {
-    echo "Fill all fields";
-    exit;
-}
+// GET OLD USER
+$old = $conn->query("
+    SELECT * FROM users WHERE id = $id
+")->fetch_assoc();
 
-$date = date("Y-m-d H:i:s");
+$oldUsername = $old['username'];
 
+// UPDATE
 $conn->query("
     UPDATE users
-    SET username='$username',
-        username_updated_at='$date'
-    WHERE id='$id'
+    SET username = '$username',
+    username_updated_at = NOW()
+    WHERE id = $id
 ");
+
+// ===== LOG =====
+$admin = $_SESSION['username'];
+
+addLog(
+    $conn,
+    "User Updated",
+    "$admin changed username from $oldUsername to $username"
+);
 
 echo "success";
 ?>
