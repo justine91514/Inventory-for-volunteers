@@ -109,7 +109,7 @@ if (isset($_POST['borrow'])) {
                 addLog(
                     $conn,
                     "Borrow",
-                    "$qty x $item",
+                    "borrowed by $name - $qty x $item",
                     $transactionId
                 );
             }

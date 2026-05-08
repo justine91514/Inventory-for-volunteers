@@ -9,6 +9,7 @@
 </head>
 
 <?php
+session_start();
 include 'db.php';
 
 function addLog($conn, $type, $desc, $transactionId = null)
@@ -16,7 +17,9 @@ function addLog($conn, $type, $desc, $transactionId = null)
     $type = $conn->real_escape_string($type);
     $desc = $conn->real_escape_string($desc);
 
-    $performedBy = $_SESSION['username'] ?? 'System';
+    $performedBy = isset($_SESSION['username'])
+    ? $_SESSION['username']
+    : 'System';
     $performedBy = $conn->real_escape_string($performedBy);
 
     $transactionId = $transactionId

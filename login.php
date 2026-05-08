@@ -29,7 +29,7 @@ if (isset($_POST['login'])) {
 
         if ($password === $user['password']) {
 
-            $_SESSION['user'] = $user['username'];
+            $_SESSION['username'] = $user['username'];
 
             header("Location: dashboard.php");
             exit;
