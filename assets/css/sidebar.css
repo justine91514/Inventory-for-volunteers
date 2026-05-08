@@ -1,0 +1,195 @@
+/* ===== SIDEBAR ===== */
+
+.sidebar h2 {
+    text-align: center;
+    font-size: 17px;
+    margin-top: 20px;
+    margin-bottom: -10px;
+    /* smaller */
+    margin-left: 80px;
+    color: #ffffff;
+}
+
+.sidebar {
+    position: fixed;
+    width: 230px;
+    height: 100vh;
+    background: #2c3e50;
+    color: #fff;
+
+    padding: 12px 8px;
+    /* smaller */
+    transition: all 0.3s ease;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#toggleBtn {
+    background: transparent;
+    border: none;
+    color: white;
+
+    font-size: 18px;
+    cursor: pointer;
+
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+}
+
+/* MENU */
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 3px 0;
+    /* smaller spacing */
+}
+
+.sidebar ul li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #ecf0f1;
+    text-decoration: none;
+
+    padding: 9px 12px;
+    /* smaller */
+    border-radius: 6px;
+
+    transition: 0.2s;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 4px;
+    margin-bottom: 12px;
+}
+
+.sidebar ul li a:hover {
+    background: #0a77e4;
+}
+
+/* ICON (fixed position) */
+.sidebar ul li a i {
+    width: 24px;
+    text-align: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    /* 🔥 prevents movement */
+}
+
+/* TEXT */
+.sidebar ul li a span {
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+}
+
+/* ===== COLLAPSED ===== */
+.sidebar.collapsed {
+    width: 70px;
+}
+
+/* HIDE TEXT ONLY (smooth) */
+.sidebar.collapsed ul li a span {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* KEEP ICON POSITION */
+.sidebar.collapsed ul li a {
+    justify-content: flex-start;
+    padding-left: 15px;
+}
+
+/* HIDE TITLE */
+.sidebar.collapsed h2 {
+    opacity: 0;
+}
+
+/* SIDEBAR HOVERING */
+.sidebar.collapsed ul li a::after {
+    content: attr(data-title);
+    position: absolute;
+    left: 80px;
+    background: #333;
+    color: #fff;
+    padding: 5px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+}
+
+.sidebar.collapsed ul li a:hover::after {
+    opacity: 1;
+}
+
+.menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* dropdown */
+.dropdown-menu {
+    display: none;
+    padding-left: 20px;
+    margin-top: 2px;
+}
+
+.dropdown-menu li a {
+    font-size: 13px;
+    padding: 6px 10px;
+}
+
+/* arrow rotate */
+.arrow {
+    margin-left: auto;
+    transition: 0.2s;
+}
+
+.dropdown.open .arrow {
+    transform: rotate(180deg);
+}
+
+.modal-body {
+    color: #222;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-box {
+    background: #fff;
+    color: #222;
+}
+
+.modal-box {
+    position: fixed;
+    z-index: 100000;
+}
