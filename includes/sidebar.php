@@ -50,6 +50,13 @@
             </a>
         </li>
 
+        <li>
+            <a href="reports.php">
+                <i class="fas fa-tab"></i>
+                <span>Reports</span>
+            </a>
+        </li>
+
         <!-- SETTINGS DROPDOWN -->
         <li class="dropdown">
             <a href="javascript:void(0)" onclick="toggleSettings()">

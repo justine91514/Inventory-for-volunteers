@@ -25,10 +25,19 @@ if (isset($_POST['time_in'])) {
                 VALUES ('$name', '$time', '$today')";
 
         if ($conn->query($sql)) {
-            $success = "Hi " . $name . " " . "your name has been recorded!";
-        } else {
-            $error = "Error: " . $conn->error;
-        }
+
+    addLog(
+        $conn,
+        "Time In",
+        "$name timed in"
+    );
+
+    $success = "Hi " . $name . " your name has been recorded!";
+
+} else {
+
+    $error = "Error: " . $conn->error;
+}
     }
 }
 ?>

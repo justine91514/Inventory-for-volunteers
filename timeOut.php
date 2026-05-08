@@ -65,8 +65,17 @@ if (isset($_POST['time_out'])) {
                     ORDER BY id DESC 
                     LIMIT 1";
 
+            //TIME OUT LOG
             if ($conn->query($sql)) {
+
+                addLog(
+                    $conn,
+                    "Time Out",
+                    "$name timed out"
+                );
+
                 $success = "Time Out recorded!";
+
             } else {
                 $error = "Error: " . $conn->error;
             }
@@ -133,71 +142,71 @@ if (isset($_POST['time_out'])) {
 </div>
 
 <script>
-const input = document.getElementById("timeOutInput");
-const dropdown = document.getElementById("dropdownList");
+    const input = document.getElementById("timeOutInput");
+    const dropdown = document.getElementById("dropdownList");
 
-// PHP data into JS
-const names = [
-    <?php while ($row = $names->fetch_assoc()): ?>
-        "<?= $row['volunteer_name'] ?>",
-    <?php endwhile; ?>
-];
+    // PHP data into JS
+    const names = [
+        <?php while ($row = $names->fetch_assoc()): ?>
+            "<?= $row['volunteer_name'] ?>",
+        <?php endwhile; ?>
+    ];
 
-// show dropdown
-input.addEventListener("focus", showList);
-input.addEventListener("input", showList);
+    // show dropdown
+    input.addEventListener("focus", showList);
+    input.addEventListener("input", showList);
 
-function showList() {
-    let val = input.value.toLowerCase();
-    dropdown.innerHTML = "";
+    function showList() {
+        let val = input.value.toLowerCase();
+        dropdown.innerHTML = "";
 
-    let filtered = names.filter(n => n.toLowerCase().includes(val));
+        let filtered = names.filter(n => n.toLowerCase().includes(val));
 
-    filtered.forEach(name => {
-        let div = document.createElement("div");
-        div.textContent = name;
+        filtered.forEach(name => {
+            let div = document.createElement("div");
+            div.textContent = name;
 
-        div.onclick = function () {
-            input.value = name;
-            dropdown.innerHTML = "";
-        };
+            div.onclick = function () {
+                input.value = name;
+                dropdown.innerHTML = "";
+            };
 
-        dropdown.appendChild(div);
+            dropdown.appendChild(div);
+        });
+
+        dropdown.style.display = "block";
+    }
+
+    // close when clicking outside
+    document.addEventListener("click", function (e) {
+        if (!e.target.closest(".dropdown-wrapper")) {
+            dropdown.style.display = "none";
+        }
     });
-
-    dropdown.style.display = "block";
-}
-
-// close when clicking outside
-document.addEventListener("click", function(e){
-    if (!e.target.closest(".dropdown-wrapper")) {
-        dropdown.style.display = "none";
-    }
-});
 </script>
 
 <script>
-document.querySelector("input[name='name']").addEventListener("keydown", function (e) {
-    if (e.key === "Enter") {
-        e.preventDefault(); // stop form auto submit
-        openTimeInModal();
-    }
-});
+    document.querySelector("input[name='name']").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault(); // stop form auto submit
+            openTimeInModal();
+        }
+    });
 </script>
 
 <script>
-document.getElementById("timeOutInput").addEventListener("keydown", function (e) {
-    if (e.key === "Enter") {
-        e.preventDefault(); // stop form auto submit
-        openTimeOutModal();
-    }
-});
+    document.getElementById("timeOutInput").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault(); // stop form auto submit
+            openTimeOutModal();
+        }
+    });
 </script>
 <script>
     document.addEventListener("click", function (e) {
-    if (e.target !== input) {
-        input.focus();
-    }
-});
+        if (e.target !== input) {
+            input.focus();
+        }
+    });
 </script>
 <?php include 'includes/footer.php'; ?>
