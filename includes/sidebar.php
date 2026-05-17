@@ -103,7 +103,7 @@
     <script>document.body.classList.add("modal-active"); // when modal opens
         document.body.classList.remove("modal-active"); // when closes</script>
     <script>
-        const loggedUser = "<?= $_SESSION['username'] ?? 'User' ?>";
+        const loggedUser = "<?= $_SESSION['username'] ?? 'user' ?>";
     </script>
     <script>
         function openLogoutModal(e) {
