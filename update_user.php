@@ -21,6 +21,10 @@ $conn->query("
     WHERE id = $id
 ");
 
+// UPDATE SESSION IF CURRENT USER CHANGED THEIR OWN USERNAME
+if ($_SESSION['username'] === $oldUsername) {
+    $_SESSION['username'] = $username;
+}
 // ===== LOG =====
 $admin = $_SESSION['username'];
 
